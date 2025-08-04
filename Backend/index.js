@@ -9,20 +9,28 @@ const localStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const { isAuth } = require('./common/common');
 const server = express();
+const cors = require('cors')
 
+const isProduction = process.env.NODE_ENV === 'production';
 
 server.use(session({
     secret:process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
     cookie:{
-        maxAge: 100 * 60 * 60 * 24
+        maxAge: 100 * 60 * 60 * 24,
+        sameSite: isProduction ? 'none' : 'lax',
+        secure: isProduction
     }
 }));
 
 server.use(passport.initialize());
 server.use(passport.session());
 server.use(express.json());
+server.use(cors({
+    credentials: true,
+    origin:'http://localhost:5173'
+}));
 
 passport.use(new localStrategy(async function verify(username, passsword, done){
     try{
@@ -39,10 +47,10 @@ passport.use(new localStrategy(async function verify(username, passsword, done){
     }
 }));
 passport.serializeUser((user, cb)=>{
-    cb(null, {id:user.id, username: user.username});
+    cb(null, {id:user.id, username: user.username, name:user.name, phone:user.phone, preferredLanguage:user.preferredLanguage, avatar:user.avatar});
 });
 passport.deserializeUser((user, cb)=>{
-    cb(null, {id:user.id, username: user.username});
+    cb(null, {id:user.id, username: user.username, name:user.name, phone:user.phone, preferredLanguage:user.preferredLanguage, avatar:user.avatar});
 });
 
 async function main(){

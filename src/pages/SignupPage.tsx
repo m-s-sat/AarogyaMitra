@@ -20,7 +20,7 @@ export const SignupPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const { availableLanguages } = useLanguage();
   const navigate = useNavigate();
 
@@ -40,15 +40,15 @@ export const SignupPage: React.FC = () => {
     // Simulate API call
     setTimeout(() => {
       const newUser = {
-        id: 'user-' + Date.now(),
         name: formData.name,
         email: formData.email,
+        password: formData.password,
         phone: formData.phone,
         preferredLanguage: formData.preferredLanguage,
         avatar: ''
       };
       
-      login(newUser);
+      signup(newUser);
       navigate('/dashboard');
       setIsLoading(false);
     }, 1500);

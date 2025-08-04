@@ -1,10 +1,15 @@
 export interface User {
-  id: string;
   name: string;
   email: string;
   phone?: string;
   preferredLanguage: string;
   avatar?: string;
+  password?:string;
+}
+
+export interface UserQuery{
+  email: string,
+  password: string
 }
 
 export interface Appointment {

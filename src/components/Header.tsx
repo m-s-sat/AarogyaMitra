@@ -50,7 +50,7 @@ export const Header: React.FC = () => {
                   >
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
-                        {user?.name.charAt(0).toUpperCase()}
+                        {user?.name?.toUpperCase()}
                       </span>
                     </div>
                     <span className="font-medium">{user?.name}</span>
@@ -137,7 +137,7 @@ export const Header: React.FC = () => {
                     <div className="flex items-center space-x-3 text-gray-700">
                       <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">
-                          {user?.name.charAt(0).toUpperCase()}
+                          {user?.name?.toUpperCase()}
                         </span>
                       </div>
                       <span className="font-medium">{user?.name}</span>

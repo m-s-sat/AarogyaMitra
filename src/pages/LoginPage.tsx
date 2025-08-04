@@ -23,16 +23,12 @@ export const LoginPage: React.FC = () => {
 
     // Simulate API call
     setTimeout(() => {
-      const mockUser = {
-        id: 'user-123',
-        name: 'John Doe',
-        email: credentials.emailOrPhone.includes('@') ? credentials.emailOrPhone : 'john.doe@example.com',
-        phone: credentials.emailOrPhone.includes('@') ? '+1234567890' : credentials.emailOrPhone,
-        preferredLanguage: 'en',
-        avatar: ''
+      const loginUser = {
+        email: credentials.emailOrPhone,
+        password: credentials.password
       };
-      
-      login(mockUser);
+      console.log(loginUser);
+      login(loginUser);
       navigate('/dashboard');
       setIsLoading(false);
     }, 1500);
