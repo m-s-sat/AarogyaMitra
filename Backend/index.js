@@ -1,71 +1,67 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const server = express();
-const authRoutes = require('./routes/auth');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const User = require('./model/auth');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const authRouter = require('./routes/auth');
 const session = require('express-session');
+const passport = require('passport');
+const User = require('./model/auth');
+const localStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const { isAuth } = require('./common/common');
+const server = express();
 
 
-server.use(express.json());
-server.use(cors());
-server.use(cookieParser());
 server.use(session({
-    secret: process.env.JWT_SECRET,
+    secret:process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
+    cookie:{
+        maxAge: 100 * 60 * 60 * 24
+    }
 }));
+
 server.use(passport.initialize());
 server.use(passport.session());
+server.use(express.json());
+
+passport.use(new localStrategy(async function verify(username, passsword, done){
+    try{
+        const user = await User.findOne({username:username});
+        if(!user) return done(null, false, {message:"Invalid Username or Password"});
+        bcrypt.compare(passsword, user.password, (err, result)=>{
+            if(err) return done(err, false);
+            if(!result) return done(null, false, {message:"Invalid username or password"});
+            return done(null, user)
+        });
+    }
+    catch(err){
+        return done(err, false, {message:"Internal server error"});
+    }
+}));
+passport.serializeUser((user, cb)=>{
+    cb(null, {id:user.id, username: user.username});
+});
+passport.deserializeUser((user, cb)=>{
+    cb(null, {id:user.id, username: user.username});
+});
 
 async function main(){
     await mongoose.connect(process.env.MONGOURI);
 }
 
-main().then(() => {
-    console.log('Connected to MongoDB');
-}).catch((err) => {
-    console.error(err);
-});
+main().then(()=>{
+    console.log('mongodb connected');
+}).catch((err)=>{
+    console.log(err);
+})
 
-passport.use(new LocalStrategy(
-    async (username, password, done) => {
-        try {
-            const user = await User.findOne({ username: username });
-            if (!user) {
-                return done(null, false, { message: 'Incorrect username or password.' });
-            }
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return done(null, false, { message: 'Incorrect username or password.' });
-            }
-            return done(null, user);
-        } catch (err) {
-            return done(err);
-        }
-    },
-));
+server.use('/auth',authRouter.router);
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
+server.get('/',isAuth,(req,res)=>{
+    console.log(req.user);
+    res.json('hello this is login page');
+})
 
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await User.findById(id);
-        done(null, user);
-    } catch(err) {
-        done(err);
-    }
-});
-server.use('/auth', authRoutes);
-
-server.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
-});
-
+server.listen(process.env.PORT, ()=>{
+    console.log(`server is running on port ${process.env.PORT}`)
+})

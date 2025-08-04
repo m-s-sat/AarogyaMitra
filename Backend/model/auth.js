@@ -2,25 +2,15 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-    username: {
-        type: String,
+    username:{
+        type:String,
         required: true,
-        unique: true,
-        validate: {
-            validator: (v) => {
-                return /^[a-zA-Z0-9]+$/.test(v);
-            },
-            message: 'Username must contain only letters and numbers',
-        },
+        unique: true
     },
-    password: {
-        type: Buffer,
-        required: true,
-    },
-    salt: {
-        type: Buffer,
-        required: true,
-    },
+    password:{
+        type:String,
+        required: true
+    }
 });
 
 userSchema.set('toJSON', {

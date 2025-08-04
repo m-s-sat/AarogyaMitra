@@ -1,10 +1,11 @@
 const express = require('express');
+const { createUser, getUser } = require('../control/auth');
 const router = express.Router();
-const { createUser } = require('../control/auth');
+const passport = require('passport');
 
-router.post('/register', createUser);
-// router.post('/login', loginUser);
-// router.post('/logout', logoutUser);
-// router.get('/check', checkAuth);
+router.post('/login',passport.authenticate('local',{
+    successRedirect: '/',
+    failureRedirect: '/auth/login',
+})).post('/register',createUser).get('/getuser',getUser);
 
-module.exports = router;
+exports.router = router
