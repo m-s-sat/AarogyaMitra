@@ -12,7 +12,6 @@ exports.createUser = (req, res)=>{
             await user.save();
             req.login(user, (err)=>{
                 if(err) res.status(401);
-                // res.redirect('/')
                 res.json(user);
             })
         });

@@ -32,11 +32,17 @@ server.use(cors({
     origin:'http://localhost:5173'
 }));
 
-passport.use(new localStrategy(async function verify(username, passsword, done){
+passport.use(new localStrategy(async function verify(username, password, done){
     try{
-        const user = await User.findOne({username:username});
+        const user = await User.findOne({
+            $or: [
+                { username: username },
+                { phone: username }
+            ]
+        });
+        console.log(user);
         if(!user) return done(null, false, {message:"Invalid Username or Password"});
-        bcrypt.compare(passsword, user.password, (err, result)=>{
+        bcrypt.compare(password, user.password, (err, result)=>{
             if(err) return done(err, false);
             if(!result) return done(null, false, {message:"Invalid username or password"});
             return done(null, user)
