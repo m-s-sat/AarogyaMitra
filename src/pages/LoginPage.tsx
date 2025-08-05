@@ -12,13 +12,25 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [useOTP, setUseOTP] = useState(false);
-  const handleGoogleRedirect = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
-  };
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [email, setEmail] = useState("");
+
   const { login } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
+  const handleGoogleRedirect = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
+
+  const handleSendLink = () => {
+  if (!email) {
+    alert("Please enter your email.");
+    return;
+  }
+  setShowForgotModal(false);
+  navigate("/password-reset");
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -34,6 +46,7 @@ export const LoginPage: React.FC = () => {
       setIsLoading(false);
     }, 1500);
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -45,11 +58,7 @@ export const LoginPage: React.FC = () => {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-lg flex items-center justify-center">
-              <img
-                src={logo}
-                alt="Aarogya Mitra"
-                className="max-h-full max-w-full object-contain"
-              />
+              <img src={logo} alt="Aarogya Mitra" className="max-h-full max-w-full object-contain" />
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('login.welcomeBack')}</h2>
@@ -84,17 +93,16 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email / Phone Field */}
             <div>
               <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700 mb-2">
                 {loginMethod === 'email' ? t('login.emailAddress') : t('login.phoneNumber')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  {loginMethod === 'email' ? (
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Phone className="h-5 w-5 text-gray-400" />
-                  )}
+                  {loginMethod === 'email'
+                    ? <Mail className="h-5 w-5 text-gray-400" />
+                    : <Phone className="h-5 w-5 text-gray-400" />}
                 </div>
                 <input
                   id="emailOrPhone"
@@ -102,12 +110,13 @@ export const LoginPage: React.FC = () => {
                   required
                   value={credentials.emailOrPhone}
                   onChange={(e) => setCredentials({ ...credentials, emailOrPhone: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder={loginMethod === 'email' ? t('login.emailPlaceholder') : t('login.phonePlaceholder')}
                 />
               </div>
             </div>
 
+            {/* Password Field */}
             {!useOTP && (
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
@@ -123,7 +132,7 @@ export const LoginPage: React.FC = () => {
                     required
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder={t('login.passwordPlaceholder')}
                   />
                   <button
@@ -131,70 +140,83 @@ export const LoginPage: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
+                    {showPassword
+                      ? <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      : <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />}
                   </button>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-between">
+            {/* Forgot Password Button */}
+            <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => setUseOTP(!useOTP)}
+                onClick={() => setShowForgotModal(true)}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
-                {useOTP ? t('login.usePassword') : t('login.useOTP')}
+                Forgot Password?
               </button>
-              {!useOTP && (
-                <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  {t('login.forgotPassword')}
-                </Link>
-              )}
             </div>
 
+            {/* Forgot Password Modal */}
+            {showForgotModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                  <h2 className="text-lg font-semibold mb-4">Reset Password</h2>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Enter the email you have an account with.
+                  </p>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="border w-full px-3 py-2 rounded mb-4"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => setShowForgotModal(false)}
+                      className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSendLink}
+                      className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      Send Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700 disabled:opacity-50"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t('login.signingIn')}</span>
-                </div>
-              ) : (
-                useOTP ? t('login.sendOTP') : t('login.signIn')
-              )}
+              {isLoading
+                ? <span>{t('login.signingIn')}</span>
+                : useOTP ? t('login.sendOTP') : t('login.signIn')}
             </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">{t('login.orContinueWith')}</span>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-center">
-              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors" onClick={handleGoogleRedirect}>
-
-                <img
-                  src="https://developers.google.com/identity/images/g-logo.png"
-                  alt="Google logo"
-                  className="w-5 h-5 mr-3"
-                />
-                <span className="text-gray-700 font-medium">{t('login.googleSignIn')}</span>
-              </button>
-            </div>
+          {/* Google Sign In */}
+          <div className="mt-6 flex justify-center">
+            <button
+              className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50"
+              onClick={handleGoogleRedirect}
+            >
+              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className="w-5 h-5 mr-3" />
+              <span className="text-gray-700 font-medium">{t('login.googleSignIn')}</span>
+            </button>
           </div>
 
+          {/* Signup Link */}
           <p className="mt-8 text-center text-sm text-gray-600">
             {t('login.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-700">

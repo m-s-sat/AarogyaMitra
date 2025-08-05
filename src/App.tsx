@@ -10,6 +10,7 @@ import { Dashboard } from './pages/Dashboard.tsx';
 import { AppointmentsPage } from './pages/AppointmentsPage.tsx';
 import { EmergencyPage } from './pages/EmergencyPage.tsx';
 import { ChatPage } from './pages/ChatPage.tsx';
+import { PasswordResetPage } from "./pages/PasswordResetPage.tsx";
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -30,68 +31,72 @@ function AppContent() {
         <Header />
         <Routes>
           {/* Public Routes */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <PublicRoute>
                 <LandingPage />
               </PublicRoute>
-            } 
+            }
           />
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               <PublicRoute>
                 <LoginPage />
               </PublicRoute>
-            } 
+            }
           />
-          <Route 
-            path="/signup" 
+          <Route
+            path="/signup"
             element={
               <PublicRoute>
                 <SignupPage />
               </PublicRoute>
-            } 
+            }
+          />
+          <Route
+            path="/password-reset"
+            element={<PasswordResetPage />}
           />
 
           {/* Protected Routes */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/appointments" 
+          <Route
+            path="/appointments"
             element={
               <ProtectedRoute>
                 <AppointmentsPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/chat" 
+          <Route
+            path="/chat"
             element={
               <ProtectedRoute>
                 <ChatPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/emergency" 
+          <Route
+            path="/emergency"
             element={
               <ProtectedRoute>
                 <EmergencyPage />
               </ProtectedRoute>
-            } 
+            }
           />
 
-          {/* Placeholder routes for other pages */}
-          <Route 
-            path="/reports" 
+          {/* Placeholder routes */}
+          <Route
+            path="/reports"
             element={
               <ProtectedRoute>
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
@@ -101,10 +106,10 @@ function AppContent() {
                   </div>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/medicines" 
+          <Route
+            path="/medicines"
             element={
               <ProtectedRoute>
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
@@ -114,10 +119,10 @@ function AppContent() {
                   </div>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/visits" 
+          <Route
+            path="/visits"
             element={
               <ProtectedRoute>
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
@@ -127,10 +132,10 @@ function AppContent() {
                   </div>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/helpdesk" 
+          <Route
+            path="/helpdesk"
             element={
               <ProtectedRoute>
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
@@ -140,10 +145,10 @@ function AppContent() {
                   </div>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
 
-          {/* Catch all route */}
+          {/* Catch all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

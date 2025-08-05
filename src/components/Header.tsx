@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
             <div className="w-14 h-14 rounded-lg flex items-center justify-center">
               <img src={logo} alt="Aarogya Mitra" className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto" />
             </div>
-            <span className="text-xl font-bold text-gray-900">AarogyaMitra</span>
+            <span className="text-xl font-bold text-gray-900">MediMitra</span>
           </Link>
 
           {/* Desktop Navigation */}
