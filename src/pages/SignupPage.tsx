@@ -57,7 +57,9 @@ export const SignupPage: React.FC = () => {
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
+  const handleGoogleRedirect = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -269,15 +271,17 @@ export const SignupPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-3 gap-3">
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🔍</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">📘</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🍎</span>
+            <div className="mt-6 w-full flex justify-center">
+              <button
+                onClick={handleGoogleRedirect}
+                className="w-full max-w-sm flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google"
+                  className="w-5 h-5"
+                />
+                <span>Continue with Google</span>
               </button>
             </div>
           </div>

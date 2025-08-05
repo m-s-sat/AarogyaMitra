@@ -6,6 +6,7 @@ const session = require('express-session');
 const passport = require('passport');
 const User = require('./model/auth');
 const localStrategy = require('passport-local').Strategy;
+const googleStrategy = require('passport-google-oauth2').Strategy;
 const bcrypt = require('bcrypt');
 const { isAuth } = require('./common/common');
 const server = express();
@@ -32,7 +33,7 @@ server.use(cors({
     origin:'http://localhost:5173'
 }));
 
-passport.use(new localStrategy(async function verify(username, password, done){
+passport.use("local", new localStrategy(async function verify(username, password, done){
     try{
         const user = await User.findOne({
             $or: [
@@ -52,6 +53,38 @@ passport.use(new localStrategy(async function verify(username, password, done){
         return done(err, false, {message:"Internal server error"});
     }
 }));
+passport.use("google", 
+    new googleStrategy({
+        clientID: process.env.GOOGLE_CLIENTID,
+        clientSecret:process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: 'http://localhost:5000/auth/google/callback',
+        userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
+    }, async(accessToken, refreshToken, profile, done)=>{
+        try{
+            const user = await User.findOne({username:profile.email});
+            const min = 1000000000;
+            const max = 9999999999;
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+            if(!user){
+                const newUser = new User({
+                    username: profile.email,
+                    password: "google",
+                    name: profile.displayName,
+                    avatar: profile.picture,
+                    preferredLanguage: 'en',
+                    phone: String(randomNumber)
+                })
+                await newUser.save();
+                return done(null, newUser);
+            }
+            return done(null, user);
+        }
+        catch(err){
+            return done(err);
+        }
+    })
+)
+
 passport.serializeUser((user, cb)=>{
     cb(null, {id:user.id, username: user.username, name:user.name, phone:user.phone, preferredLanguage:user.preferredLanguage, avatar:user.avatar});
 });
