@@ -14,7 +14,7 @@ export const LoginPage: React.FC = () => {
   const [useOTP, setUseOTP] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [email, setEmail] = useState("");
-
+  const [isSendLoading, setIsSendLoading] = useState(false);
   const { login } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -23,13 +23,22 @@ export const LoginPage: React.FC = () => {
     window.location.href = 'http://localhost:5000/auth/google';
   };
 
-  const handleSendLink = () => {
-  if (!email) {
-    alert("Please enter your email.");
-    return;
-  }
-  setShowForgotModal(false);
-  navigate("/password-reset");
+  const handleSendLink = async() => {
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+    setIsSendLoading(true)
+    // setShowForgotModal(false);
+    // navigate("/password-reset");
+    const response = await fetch('http://localhost:5000/auth/reset-request',{
+      method: "POST",
+      headers: {'content-type':'application/json'},
+      body: JSON.stringify({email:email}),
+    })
+    setIsLoading(false);
+    if(!response.ok) alert('email not sent');
+    else alert('email sent');
 };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,9 +193,11 @@ export const LoginPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleSendLink}
+                      disabled={isSendLoading}
                       className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
                     >
-                      Send Link
+                      {isSendLoading && <span>Sending Link</span>}
+                      {!isSendLoading && <span>Send Link</span>}
                     </button>
                   </div>
                 </div>

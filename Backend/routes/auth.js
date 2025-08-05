@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, getUser, loginUser, logout } = require('../control/auth');
+const { createUser, getUser, loginUser, logout, setForgotPassToken, forgotpass } = require('../control/auth');
 const router = express.Router();
 const passport = require('passport');
 
@@ -13,6 +13,8 @@ router
     .get('/google/callback', passport.authenticate("google"), (req,res)=>{
         console.log(req.user);
         res.redirect('http://localhost:5173/dashboard')
-    });
+    })
+    .post('/reset-request',setForgotPassToken)
+    .post('/password-reset',forgotpass);
 
 exports.router = router

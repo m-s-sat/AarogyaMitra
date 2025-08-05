@@ -1,6 +1,6 @@
 // src/pages/PasswordResetPage.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import logo from "../assets/Logo.png";
@@ -10,14 +10,27 @@ export const PasswordResetPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get('email');
+  const token = queryParams.get('token');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
     // Backend request to reset password here
+    const response = await fetch('http://localhost:5000/auth/password-reset',{
+      method:"POST",
+      headers: {'content-type':'application/json'},
+      body: JSON.stringify({password:newPassword, confirmPassword:confirmPassword, token:token, email:email}),
+    });
+    if(!response.ok){
+      alert("Error in reseting your password");
+      return
+    };
     alert("Password successfully reset!");
     navigate("/login");
   };
