@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, Phone, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext';
+import logo from "../assets/Logo.png";
 
 export const SignupPage: React.FC = () => {
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,25 +22,24 @@ export const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login } = useAuth();
-  const { availableLanguages } = useLanguage();
+  const { availableLanguages, t } = useLanguage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      alert(t('signup.passwordMismatch'));
       return;
     }
     if (!formData.agreeToTerms) {
-      alert('Please agree to the terms and conditions');
+      alert(t('signup.mustAgree'));
       return;
     }
 
     setIsLoading(true);
 
-    // Simulate API call
     setTimeout(() => {
       const newUser = {
         id: 'user-' + Date.now(),
@@ -47,7 +49,7 @@ export const SignupPage: React.FC = () => {
         preferredLanguage: formData.preferredLanguage,
         avatar: ''
       };
-      
+
       login(newUser);
       navigate('/dashboard');
       setIsLoading(false);
@@ -68,19 +70,24 @@ export const SignupPage: React.FC = () => {
       >
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">H+</span>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Aarogya Mitra"
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h2>
-          <p className="text-gray-600">Join thousands of users for better healthcare</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('signup.createAccountTitle')}</h2>
+          <p className="text-gray-600">{t('signup.createAccountSubtitle')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Full Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
+                {t('signup.fullName')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,14 +100,15 @@ export const SignupPage: React.FC = () => {
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your full name"
+                  placeholder={t('signup.fullNamePlaceholder')}
                 />
               </div>
             </div>
 
+            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                {t('signup.emailAddress')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,14 +121,15 @@ export const SignupPage: React.FC = () => {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your email"
+                  placeholder={t('signup.emailPlaceholder')}
                 />
               </div>
             </div>
 
+            {/* Phone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                {t('signup.phoneNumber')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -133,14 +142,15 @@ export const SignupPage: React.FC = () => {
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your phone number"
+                  placeholder={t('signup.phonePlaceholder')}
                 />
               </div>
             </div>
 
+            {/* Preferred Language */}
             <div>
               <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-2">
-                Preferred Language
+                {t('signup.preferredLanguage')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -161,9 +171,10 @@ export const SignupPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                {t('signup.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -176,7 +187,7 @@ export const SignupPage: React.FC = () => {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Create a password"
+                  placeholder={t('signup.passwordPlaceholder')}
                 />
                 <button
                   type="button"
@@ -192,9 +203,10 @@ export const SignupPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+                {t('signup.confirmPassword')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -207,7 +219,7 @@ export const SignupPage: React.FC = () => {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Confirm your password"
+                  placeholder={t('signup.confirmPasswordPlaceholder')}
                 />
                 <button
                   type="button"
@@ -223,6 +235,7 @@ export const SignupPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Terms */}
             <div className="flex items-center">
               <input
                 id="agreeToTerms"
@@ -232,17 +245,26 @@ export const SignupPage: React.FC = () => {
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
-                I agree to the{' '}
-                <Link to="/terms" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Terms and Conditions
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Privacy Policy
-                </Link>
+                {t('signup.agreeToTerms')}{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowTerms(true)}
+                  className="text-blue-600 hover:text-blue-700 font-medium underline"
+                >
+                  {t('signup.terms')}
+                </button>{' '}
+                {t('signup.and')}{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowPrivacy(true)}
+                  className="text-blue-600 hover:text-blue-700 font-medium underline"
+                >
+                  {t('signup.privacy')}
+                </button>
               </label>
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
@@ -251,44 +273,105 @@ export const SignupPage: React.FC = () => {
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Creating account...</span>
+                  <span>{t('signup.creatingAccount')}</span>
                 </div>
               ) : (
-                'Create Account'
+                t('signup.createAccountBtn')
               )}
             </button>
           </form>
 
+          {/* OR Divider */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or sign up with</span>
+                <span className="px-2 bg-white text-gray-500">{t('signup.orSignUpWith')}</span>
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-3 gap-3">
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🔍</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">📘</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🍎</span>
+            {/* Google Sign In */}
+            <div className="mt-6 flex justify-center">
+              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors">
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google logo"
+                  className="w-5 h-5 mr-3"
+                />
+                <span className="text-gray-700 font-medium">{t('signup.googleSignIn')}</span>
               </button>
             </div>
           </div>
 
+          {/* Already have account */}
           <p className="mt-8 text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('signup.alreadyHaveAccount')}{' '}
             <Link to="/login" className="font-medium text-blue-600 hover:text-blue-700">
-              Sign in
+              {t('signup.signIn')}
             </Link>
           </p>
         </div>
+
+        {/* Terms Modal */}
+        {showTerms && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
+              <h2 className="text-xl font-bold mb-4">{t('signup.termsTitle')}</h2>
+              <div className="text-sm text-gray-600 overflow-y-auto max-h-60 space-y-3">
+                <p>{t('signup.termsIntro')}</p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>{t('signup.termsEligibility')}</li>
+                  <li>{t('signup.termsResponsibility')}</li>
+                  <li>{t('signup.termsUse')}</li>
+                  <li>{t('signup.termsAccuracy')}</li>
+                  <li>{t('signup.termsChanges')}</li>
+                  <li>{t('signup.termsTermination')}</li>
+                  <li>{t('signup.termsLiability')}</li>
+                </ol>
+                <p>{t('signup.termsConclusion')}</p>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => setShowTerms(false)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {t('signup.close')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Privacy Modal */}
+        {showPrivacy && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
+              <h2 className="text-xl font-bold mb-4">{t('signup.privacyTitle')}</h2>
+              <div className="text-sm text-gray-600 overflow-y-auto max-h-60 space-y-3">
+                <p>{t('signup.privacyIntro')}</p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>{t('signup.privacyCollect')}</li>
+                  <li>{t('signup.privacyUse')}</li>
+                  <li>{t('signup.privacyShare')}</li>
+                  <li>{t('signup.privacySecurity')}</li>
+                  <li>{t('signup.privacyRights')}</li>
+                  <li>{t('signup.privacyUpdates')}</li>
+                </ol>
+                <p>{t('signup.privacyContact')}</p>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => setShowPrivacy(false)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {t('signup.close')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </motion.div>
     </div>
   );

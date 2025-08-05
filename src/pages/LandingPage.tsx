@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { FeatureCard } from '../components/FeatureCard';
-
+import logo from "../assets/Logo.png"
 export const LandingPage: React.FC = () => {
   const { t } = useLanguage();
 
@@ -24,25 +24,25 @@ export const LandingPage: React.FC = () => {
     {
       icon: Calendar,
       title: t('features.appointments'),
-      description: 'Schedule appointments with healthcare providers in your preferred language',
+      description: t('features.appointments.desc'),
       gradient: 'bg-gradient-to-r from-blue-500 to-blue-600'
     },
     {
       icon: FileText,
       title: t('features.reports'),
-      description: 'Securely store and access your medical reports and documents',
+      description: t('features.reports.desc'),
       gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600'
     },
     {
       icon: Bot,
       title: t('features.chatbot'),
-      description: 'Get instant health advice from our AI-powered multilingual assistant',
+      description: t('features.assistant.desc'),
       gradient: 'bg-gradient-to-r from-purple-500 to-purple-600'
     },
     {
       icon: AlertTriangle,
       title: t('features.emergency'),
-      description: 'Quick access to emergency services and nearest healthcare facilities',
+      description: t('features.helpdesk.desc'),
       gradient: 'bg-gradient-to-r from-red-500 to-red-600'
     }
   ];
@@ -50,23 +50,23 @@ export const LandingPage: React.FC = () => {
   const comingSoonFeatures = [
     {
       icon: Smartphone,
-      title: 'Wearable Integration',
-      description: 'Connect your fitness trackers and smartwatches'
+      title: t('comingSoon.wearable'),
+      description: t('comingSoon.wearable')
     },
     {
       icon: Shield,
-      title: 'Insurance Claim Assistant',
-      description: 'Simplified insurance claim processing'
+      title: t('comingSoon.insurance'),
+      description: t('comingSoon.insurance')
     },
     {
       icon: Users,
-      title: 'Family Health Hub',
-      description: 'Manage health records for your entire family'
+      title: t('comingSoon.family'),
+      description: t('comingSoon.family')
     },
     {
       icon: Zap,
-      title: 'AI Symptom Checker',
-      description: 'Advanced symptom analysis and recommendations'
+      title: t('comingSoon.symptomChecker'),
+      description: t('comingSoon.symptomChecker')
     }
   ];
 
@@ -104,7 +104,7 @@ export const LandingPage: React.FC = () => {
                 to="/signup"
                 className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2"
               >
-                <span>Get Started Free</span>
+                <span>{t('nav.signup')}</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
               
@@ -128,7 +128,7 @@ export const LandingPage: React.FC = () => {
                   <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
                     <div className="text-center">
                       <Play className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                      <p className="text-gray-600 font-medium">Watch Demo Video</p>
+                      <p className="text-gray-600 font-medium">{t('common.demoVideo') || 'Watch Demo Video'}</p>
                     </div>
                   </div>
                 </div>
@@ -149,10 +149,10 @@ export const LandingPage: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need for Better Healthcare
+              {t('featuresSection.title') || 'Everything You Need for Better Healthcare'}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our comprehensive platform provides all the tools you need to manage your health effectively
+              {t('featuresSection.subtitle') || 'Our comprehensive platform provides all the tools you need to manage your health effectively'}
             </p>
           </motion.div>
 
@@ -175,41 +175,21 @@ export const LandingPage: React.FC = () => {
       <div className="py-20 bg-gradient-to-r from-blue-600 to-emerald-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
+            <motion.div>
               <div className="text-4xl font-bold mb-2">50K+</div>
-              <div className="text-blue-100">Happy Users</div>
+              <div className="text-blue-100">{t('stats.happyUsers') || 'Happy Users'}</div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
+            <motion.div>
               <div className="text-4xl font-bold mb-2">25+</div>
-              <div className="text-blue-100">Languages Supported</div>
+              <div className="text-blue-100">{t('stats.languages') || 'Languages Supported'}</div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
+            <motion.div>
               <div className="text-4xl font-bold mb-2">1M+</div>
-              <div className="text-blue-100">Appointments Booked</div>
+              <div className="text-blue-100">{t('stats.appointments') || 'Appointments Booked'}</div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
+            <motion.div>
               <div className="text-4xl font-bold mb-2">24/7</div>
-              <div className="text-blue-100">AI Support</div>
+              <div className="text-blue-100">{t('stats.aiSupport') || 'AI Support'}</div>
             </motion.div>
           </div>
         </div>
@@ -219,33 +199,22 @@ export const LandingPage: React.FC = () => {
       <div className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Coming Soon 🚀
+              {t('comingSoon.title')}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Exciting new features on the horizon to enhance your healthcare experience
+              {t('comingSoon.subtitle') || 'Exciting new features on the horizon to enhance your healthcare experience'}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {comingSoonFeatures.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 relative overflow-hidden"
-              >
+              <motion.div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 relative overflow-hidden">
                 <div className="absolute top-4 right-4">
                   <span className="bg-orange-100 text-orange-600 text-xs font-semibold px-2 py-1 rounded-full">
-                    Stay Tuned
+                    {t('common.stayTuned') || 'Stay Tuned'}
                   </span>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mb-4">
@@ -261,55 +230,37 @@ export const LandingPage: React.FC = () => {
 
       {/* Testimonial Section */}
       <div className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <div className="flex justify-center mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
-              ))}
-            </div>
-            <blockquote className="text-2xl font-medium text-gray-900 mb-6 max-w-4xl mx-auto">
-              "HealthAssist made it so easy to book appointments and communicate with doctors in my native language. 
-              The AI assistant is incredibly helpful and understanding."
-            </blockquote>
-            <div className="text-gray-600">
-              <p className="font-semibold">Maria Rodriguez</p>
-              <p>Patient from Barcelona</p>
-            </div>
-          </motion.div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex justify-center mb-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+            ))}
+          </div>
+          <blockquote className="text-2xl font-medium text-gray-900 mb-6 max-w-4xl mx-auto">
+            {t('testimonial.text') || `"Aarogya Mitra made it so easy to book appointments and communicate with doctors in my native language. The AI assistant is incredibly helpful and understanding."`}
+          </blockquote>
+          <div className="text-gray-600">
+            <p className="font-semibold">{t('testimonial.name') || 'Maria Rodriguez'}</p>
+            <p>{t('testimonial.location') || 'Patient from Barcelona'}</p>
+          </div>
         </div>
       </div>
 
       {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-br from-blue-600 to-emerald-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Take Control of Your Health?
-            </h2>
-            <p className="text-xl mb-8 max-w-3xl mx-auto text-blue-100">
-              Join thousands of users who trust HealthAssist for their healthcare needs
-            </p>
-            <Link
-              to="/signup"
-              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center space-x-2"
-            >
-              <span>Start Your Journey</span>
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </motion.div>
-        </div>
+      <div className="py-20 bg-gradient-to-br from-blue-600 to-emerald-600 text-white text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          {t('cta.title') || 'Ready to Take Control of Your Health?'}
+        </h2>
+        <p className="text-xl mb-8 max-w-3xl mx-auto text-blue-100">
+          {t('cta.subtitle') || 'Join thousands of users who trust Aarogya Mitra for their healthcare needs'}
+        </p>
+        <Link
+          to="/signup"
+          className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center space-x-2"
+        >
+          <span>{t('cta.button') || 'Start Your Journey'}</span>
+          <ArrowRight className="w-5 h-5" />
+        </Link>
       </div>
 
       {/* Footer */}
@@ -318,46 +269,48 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">H+</span>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Aarogya Mitra"
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
                 </div>
-                <span className="text-xl font-bold">HealthAssist</span>
+                <span className="text-xl font-bold">{t('footer.brand') || 'Aarogya Mitra'}</span>
               </div>
               <p className="text-gray-400">
-                Your trusted multilingual healthcare companion
+                {t('footer.tagline') || 'Your trusted multilingual healthcare companion'}
               </p>
             </div>
-            
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">{t('footer.product') || 'Product'}</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+                <li><a href="#">{t('footer.features') || 'Features'}</a></li>
+                <li><a href="#">{t('footer.pricing') || 'Pricing'}</a></li>
+                <li><a href="#">{t('footer.api') || 'API'}</a></li>
               </ul>
             </div>
-            
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4">{t('footer.company') || 'Company'}</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#">{t('footer.about') || 'About'}</a></li>
+                <li><a href="#">{t('footer.blog') || 'Blog'}</a></li>
+                <li><a href="#">{t('footer.careers') || 'Careers'}</a></li>
               </ul>
             </div>
-            
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">{t('footer.support') || 'Support'}</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                <li><a href="#">{t('footer.help') || 'Help Center'}</a></li>
+                <li><a href="#">{t('footer.privacy') || 'Privacy Policy'}</a></li>
+                <li><a href="#">{t('footer.terms') || 'Terms of Service'}</a></li>
               </ul>
             </div>
           </div>
-          
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 HealthAssist. All rights reserved.</p>
+            <p>&copy; 2025 {t('footer.brand') || 'Aarogya Mitra'}. {t('footer.rights') || 'All rights reserved.'}</p>
           </div>
         </div>
       </footer>

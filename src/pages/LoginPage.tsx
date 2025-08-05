@@ -1,10 +1,10 @@
-'use client'
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Phone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext';
+import logo from "../assets/Logo.png";
 
 export const LoginPage: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
@@ -12,7 +12,7 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [useOTP, setUseOTP] = useState(false);
-  
+
   const { login } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -21,7 +21,6 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
     setTimeout(() => {
       const mockUser = {
         id: 'user-123',
@@ -31,7 +30,7 @@ export const LoginPage: React.FC = () => {
         preferredLanguage: 'en',
         avatar: ''
       };
-      
+
       login(mockUser);
       navigate('/dashboard');
       setIsLoading(false);
@@ -48,12 +47,16 @@ export const LoginPage: React.FC = () => {
       >
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">H+</span>
+            <div className="w-20 h-20 rounded-lg flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Aarogya Mitra"
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-          <p className="text-gray-600">Sign in to your account</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('login.welcomeBack')}</h2>
+          <p className="text-gray-600">{t('login.signInToAccount')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -62,33 +65,31 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setLoginMethod('email')}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${
-                loginMethod === 'email'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${loginMethod === 'email'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+                }`}
             >
               <Mail className="w-4 h-4" />
-              <span>Email</span>
+              <span>{t('login.email')}</span>
             </button>
             <button
               type="button"
               onClick={() => setLoginMethod('phone')}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${
-                loginMethod === 'phone'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${loginMethod === 'phone'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+                }`}
             >
               <Phone className="w-4 h-4" />
-              <span>Phone</span>
+              <span>{t('login.phone')}</span>
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700 mb-2">
-                {loginMethod === 'email' ? 'Email Address' : 'Phone Number'}
+                {loginMethod === 'email' ? t('login.emailAddress') : t('login.phoneNumber')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -105,7 +106,7 @@ export const LoginPage: React.FC = () => {
                   value={credentials.emailOrPhone}
                   onChange={(e) => setCredentials({ ...credentials, emailOrPhone: e.target.value })}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder={loginMethod === 'email' ? 'Enter your email' : 'Enter your phone number'}
+                  placeholder={loginMethod === 'email' ? t('login.emailPlaceholder') : t('login.phonePlaceholder')}
                 />
               </div>
             </div>
@@ -113,7 +114,7 @@ export const LoginPage: React.FC = () => {
             {!useOTP && (
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
+                  {t('login.password')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -126,7 +127,7 @@ export const LoginPage: React.FC = () => {
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder')}
                   />
                   <button
                     type="button"
@@ -149,11 +150,11 @@ export const LoginPage: React.FC = () => {
                 onClick={() => setUseOTP(!useOTP)}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
-                {useOTP ? 'Use Password' : 'Use OTP instead'}
+                {useOTP ? t('login.usePassword') : t('login.useOTP')}
               </button>
               {!useOTP && (
                 <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  Forgot password?
+                  {t('login.forgotPassword')}
                 </Link>
               )}
             </div>
@@ -166,10 +167,10 @@ export const LoginPage: React.FC = () => {
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+                  <span>{t('login.signingIn')}</span>
                 </div>
               ) : (
-                useOTP ? 'Send OTP' : 'Sign In'
+                useOTP ? t('login.sendOTP') : t('login.signIn')
               )}
             </button>
           </form>
@@ -180,27 +181,26 @@ export const LoginPage: React.FC = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-gray-500">{t('login.orContinueWith')}</span>
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-3 gap-3">
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🔍</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">📘</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-                <span className="text-lg">🍎</span>
+            <div className="mt-6 flex justify-center">
+              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors">
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google logo"
+                  className="w-5 h-5 mr-3"
+                />
+                <span className="text-gray-700 font-medium">{t('login.googleSignIn')}</span>
               </button>
             </div>
           </div>
 
           <p className="mt-8 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-700">
-              Sign up now
+              {t('login.signUpNow')}
             </Link>
           </p>
         </div>

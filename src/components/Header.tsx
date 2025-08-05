@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { LanguageSelector } from './LanguageSelector';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../assets/Logo.png'
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -26,23 +27,21 @@ export const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">H+</span>
+            <div className="w-14 h-14 rounded-lg flex items-center justify-center">
+              <img src={logo} alt="Aarogya Mitra" className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto" />
             </div>
-            <span className="text-xl font-bold text-gray-900">HealthAssist</span>
+            <span className="text-xl font-bold text-gray-900">AarogyaMitra</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <LanguageSelector />
-            
             {isAuthenticated ? (
               <>
                 <button className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
                   <Bell className="w-5 h-5" />
                   <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
                 </button>
-                
                 <div className="relative">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -55,7 +54,6 @@ export const Header: React.FC = () => {
                     </div>
                     <span className="font-medium">{user?.name}</span>
                   </button>
-                  
                   <AnimatePresence>
                     {showProfileMenu && (
                       <motion.div
@@ -70,7 +68,7 @@ export const Header: React.FC = () => {
                           onClick={() => setShowProfileMenu(false)}
                         >
                           <User className="w-4 h-4" />
-                          <span>Profile</span>
+                          <span>{t('header.profile')}</span>
                         </Link>
                         <Link
                           to="/settings"
@@ -78,7 +76,7 @@ export const Header: React.FC = () => {
                           onClick={() => setShowProfileMenu(false)}
                         >
                           <Settings className="w-4 h-4" />
-                          <span>Settings</span>
+                          <span>{t('header.settings')}</span>
                         </Link>
                         <hr className="my-2 border-gray-200" />
                         <button
@@ -86,7 +84,7 @@ export const Header: React.FC = () => {
                           className="flex items-center space-x-3 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors w-full text-left"
                         >
                           <LogOut className="w-4 h-4" />
-                          <span>Logout</span>
+                          <span>{t('header.logout')}</span>
                         </button>
                       </motion.div>
                     )}
@@ -131,7 +129,6 @@ export const Header: React.FC = () => {
             >
               <div className="space-y-4">
                 <LanguageSelector />
-                
                 {isAuthenticated ? (
                   <>
                     <div className="flex items-center space-x-3 text-gray-700">
@@ -147,13 +144,13 @@ export const Header: React.FC = () => {
                       className="block text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      Profile
+                      {t('header.profile')}
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="block text-red-600 hover:text-red-700 transition-colors text-left"
                     >
-                      Logout
+                      {t('header.logout')}
                     </button>
                   </>
                 ) : (

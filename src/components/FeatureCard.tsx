@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FeatureCardProps {
   icon: any;
@@ -17,6 +17,8 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   gradient,
   delay = 0 
 }) => {
+  const { t } = useLanguage();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,8 +30,8 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       <div className={`w-12 h-12 ${gradient} rounded-lg flex items-center justify-center mb-4`}>
         <Icon className="w-6 h-6 text-white" />
       </div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600 leading-relaxed">{description}</p>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">{t(title)}</h3>
+      <p className="text-gray-600 leading-relaxed">{t(description)}</p>
     </motion.div>
   );
 };

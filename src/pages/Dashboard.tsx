@@ -25,43 +25,43 @@ export const Dashboard: React.FC = () => {
   const quickActions = [
     {
       icon: Calendar,
-      title: 'Book Appointment',
-      description: 'Schedule with healthcare providers',
+      title: t('features.appointments'),
+      description: t('dashboard.quickActions.appointmentsDesc'),
       onClick: () => navigate('/appointments'),
       gradient: 'bg-gradient-to-r from-blue-500 to-blue-600'
     },
     {
       icon: FileText,
-      title: 'My Reports',
-      description: 'View and manage medical reports',
+      title: t('dashboard.quickActions.reports'),
+      description: t('dashboard.quickActions.reportsDesc'),
       onClick: () => navigate('/reports'),
       gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600'
     },
     {
       icon: Pill,
-      title: 'My Medicines',
-      description: 'Track medication schedule',
+      title: t('dashboard.quickActions.medicines'),
+      description: t('dashboard.quickActions.medicinesDesc'),
       onClick: () => navigate('/medicines'),
       gradient: 'bg-gradient-to-r from-purple-500 to-purple-600'
     },
     {
       icon: Video,
-      title: 'Upcoming Visits',
-      description: 'View scheduled appointments',
+      title: t('dashboard.quickActions.visits'),
+      description: t('dashboard.quickActions.visitsDesc'),
       onClick: () => navigate('/visits'),
       gradient: 'bg-gradient-to-r from-indigo-500 to-indigo-600'
     },
     {
       icon: Phone,
-      title: 'Call Helpdesk',
-      description: '24/7 medical assistance',
+      title: t('dashboard.quickActions.helpdesk'),
+      description: t('dashboard.quickActions.helpdeskDesc'),
       onClick: () => navigate('/helpdesk'),
       gradient: 'bg-gradient-to-r from-orange-500 to-orange-600'
     },
     {
       icon: MessageCircle,
-      title: 'Speak to Assistant',
-      description: 'AI-powered health guidance',
+      title: t('dashboard.quickActions.assistant'),
+      description: t('dashboard.quickActions.assistantDesc'),
       onClick: () => navigate('/chat'),
       gradient: 'bg-gradient-to-r from-pink-500 to-pink-600'
     }
@@ -95,10 +95,10 @@ export const Dashboard: React.FC = () => {
           className="mb-8"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            {t(`dashboard.greeting', ${ {name: user?.name || 'there'} }`)}
+            {t('dashboard.greeting', { name: user?.name || t('common.there') })}
           </h1>
           <p className="text-gray-600 text-lg">
-            Here's an overview of your health dashboard
+            {t('dashboard.subtitle')}
           </p>
         </motion.div>
 
@@ -112,8 +112,8 @@ export const Dashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Next Appointment</p>
-                <p className="text-2xl font-bold text-gray-900">Today</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.stats.nextAppointment')}</p>
+                <p className="text-2xl font-bold text-gray-900">{t('dashboard.stats.today')}</p>
                 <p className="text-sm text-blue-600">10:30 AM</p>
               </div>
               <Calendar className="w-8 h-8 text-blue-600" />
@@ -128,9 +128,9 @@ export const Dashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Medicines</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.stats.activeMedicines')}</p>
                 <p className="text-2xl font-bold text-gray-900">5</p>
-                <p className="text-sm text-emerald-600">2 due today</p>
+                <p className="text-sm text-emerald-600">{t('dashboard.stats.dueToday', { count: String(2) })}</p>
               </div>
               <Pill className="w-8 h-8 text-emerald-600" />
             </div>
@@ -144,9 +144,9 @@ export const Dashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Health Score</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.stats.healthScore')}</p>
                 <p className="text-2xl font-bold text-gray-900">85</p>
-                <p className="text-sm text-purple-600">Good</p>
+                <p className="text-sm text-purple-600">{t('dashboard.stats.good')}</p>
               </div>
               <Activity className="w-8 h-8 text-purple-600" />
             </div>
@@ -160,9 +160,9 @@ export const Dashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Reports</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.stats.reports')}</p>
                 <p className="text-2xl font-bold text-gray-900">12</p>
-                <p className="text-sm text-orange-600">3 recent</p>
+                <p className="text-sm text-orange-600">{t('dashboard.stats.recentReports', { count: String(3) })}</p>
               </div>
               <FileText className="w-8 h-8 text-orange-600" />
             </div>
@@ -178,7 +178,7 @@ export const Dashboard: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="mb-6"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('dashboard.quickActions.title')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
                   <QuickActionCard
@@ -203,19 +203,19 @@ export const Dashboard: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-bold mb-2">Emergency Services</h3>
-                  <p className="text-red-100 mb-4">24/7 immediate assistance</p>
+                  <h3 className="text-xl font-bold mb-2">{t('dashboard.emergency.title')}</h3>
+                  <p className="text-red-100 mb-4">{t('dashboard.emergency.subtitle')}</p>
                   <div className="flex space-x-4">
                     <button
                       onClick={() => navigate('/emergency')}
                       className="bg-white text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-50 transition-colors flex items-center space-x-2"
                     >
                       <AlertTriangle className="w-4 h-4" />
-                      <span>SOS</span>
+                      <span>{t('dashboard.emergency.sos')}</span>
                     </button>
                     <button className="bg-red-600 border-2 border-white text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors flex items-center space-x-2">
                       <MapPin className="w-4 h-4" />
-                      <span>Find Hospital</span>
+                      <span>{t('dashboard.emergency.findHospital')}</span>
                     </button>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export const Dashboard: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.6 }}
               className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Appointments</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.upcoming.title')}</h3>
               <div className="space-y-4">
                 {upcomingAppointments.map((appointment, index) => (
                   <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -247,7 +247,7 @@ export const Dashboard: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">{appointment.doctor}</p>
                       <p className="text-xs text-gray-500">{appointment.department}</p>
-                      <p className="text-xs text-gray-500">{appointment.date} at {appointment.time}</p>
+                      <p className="text-xs text-gray-500">{appointment.date} {t('common.at')} {appointment.time}</p>
                     </div>
                   </div>
                 ))}
@@ -256,7 +256,7 @@ export const Dashboard: React.FC = () => {
                 onClick={() => navigate('/appointments')}
                 className="w-full mt-4 text-center text-blue-600 hover:text-blue-700 font-medium text-sm"
               >
-                View all appointments
+                {t('dashboard.upcoming.viewAll')}
               </button>
             </motion.div>
 
@@ -267,15 +267,15 @@ export const Dashboard: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.7 }}
               className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon 🚀</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('landing.comingSoon.title')}</h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
                     <Users className="w-4 h-4 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Family Health Hub</p>
-                    <p className="text-xs text-gray-500">Manage family health records</p>
+                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.familyHealth')}</p>
+                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.familyHealthDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -283,13 +283,13 @@ export const Dashboard: React.FC = () => {
                     <Activity className="w-4 h-4 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Wearable Integration</p>
-                    <p className="text-xs text-gray-500">Connect fitness trackers</p>
+                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.wearableIntegration')}</p>
+                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.wearableIntegrationDesc')}</p>
                   </div>
                 </div>
                 <div className="text-center mt-4">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
-                    Stay Tuned
+                    {t('common.stayTuned')}
                   </span>
                 </div>
               </div>

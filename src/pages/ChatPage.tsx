@@ -14,11 +14,11 @@ interface Message {
 }
 
 export const ChatPage: React.FC = () => {
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: `Hello! I'm your multilingual health assistant. I can help you with health questions, symptoms, and medical guidance in ${currentLanguage.nativeName}. How can I assist you today?`,
+      text: t('chat.welcome', { language: currentLanguage.nativeName }),
       sender: 'assistant',
       timestamp: new Date(),
       language: currentLanguage.code
@@ -42,11 +42,11 @@ export const ChatPage: React.FC = () => {
 
   const generateResponse = (userMessage: string): string => {
     const responses = [
-      "I understand your concern. Based on what you've described, I'd recommend consulting with a healthcare professional for a proper evaluation.",
-      "Thank you for sharing that information. For symptoms like these, it's important to monitor them closely and seek medical attention if they worsen.",
-      "I can help you understand this better. However, please remember that I cannot replace professional medical advice.",
-      `That's a great question about your health. In ${currentLanguage.nativeName}, I'd say it's always best to be proactive about your wellbeing.`,
-      "I'm here to support you with health information. Would you like me to help you find healthcare providers in your area?"
+      t('chat.responses.consultProfessional'),
+      t('chat.responses.monitorSymptoms'),
+      t('chat.responses.notReplaceAdvice'),
+      t('chat.responses.proactive', { language: currentLanguage.nativeName }),
+      t('chat.responses.findProviders')
     ];
     
     return responses[Math.floor(Math.random() * responses.length)];
@@ -95,7 +95,7 @@ export const ChatPage: React.FC = () => {
       // Start recording simulation
       setTimeout(() => {
         setIsRecording(false);
-        setInputText("I have been feeling tired lately and have some headaches. Can you help me understand what might be causing this?");
+        setInputText(t('chat.recording.sampleText'));
       }, 3000);
     }
   };
@@ -114,8 +114,8 @@ export const ChatPage: React.FC = () => {
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Health Assistant</h1>
-              <p className="text-sm text-gray-500">Multilingual AI Support</p>
+              <h1 className="text-lg font-semibold text-gray-900">{t('chat.header.title')}</h1>
+              <p className="text-sm text-gray-500">{t('chat.header.subtitle')}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -176,7 +176,7 @@ export const ChatPage: React.FC = () => {
                         hour: '2-digit', 
                         minute: '2-digit' 
                       })}
-                      {message.isVoice && ' • Voice message'}
+                      {message.isVoice && ` • ${t('chat.voiceMessageLabel')}`}
                     </p>
                   </div>
                 </div>
@@ -221,7 +221,7 @@ export const ChatPage: React.FC = () => {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={`Type your health question in ${currentLanguage.nativeName}...`}
+                placeholder={t('chat.input.placeholder', { language: currentLanguage.nativeName })}
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 disabled={isLoading}
               />
@@ -254,14 +254,14 @@ export const ChatPage: React.FC = () => {
               className="mt-3 flex items-center justify-center space-x-2 text-red-600"
             >
               <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce"></div>
-              <span className="text-sm font-medium">Recording... Speak now</span>
+              <span className="text-sm font-medium">{t('chat.recording.label')}</span>
               <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
             </motion.div>
           )}
           
           <div className="mt-3 text-center">
             <p className="text-xs text-gray-500">
-              AI assistant can make mistakes. Please consult healthcare professionals for medical advice.
+              {t('chat.disclaimer')}
             </p>
           </div>
         </div>
