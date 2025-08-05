@@ -23,10 +23,6 @@ export const useLanguage = () => {
 const languages: Language[] = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
 ];
 type TranslationsType = Record<string, Record<string, string>>;
 // In a real app, these would come from JSON files
