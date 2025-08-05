@@ -9,7 +9,7 @@ import { SignupPage } from './pages/SignupPage.tsx';
 import { Dashboard } from './pages/Dashboard.tsx';
 import { AppointmentsPage } from './pages/AppointmentsPage.tsx';
 import { EmergencyPage } from './pages/EmergencyPage.tsx';
-import { ChatPage } from './pages/Chatpage.tsx';
+import { ChatPage } from './pages/ChatPage.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {

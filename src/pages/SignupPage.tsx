@@ -22,8 +22,8 @@ export const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { login } = useAuth();
+  
+  const { signup } = useAuth();
   const { availableLanguages, t } = useLanguage();
   const navigate = useNavigate();
 
@@ -45,15 +45,15 @@ export const SignupPage: React.FC = () => {
 
     setTimeout(() => {
       const newUser = {
-        id: 'user-' + Date.now(),
         name: formData.name,
         email: formData.email,
+        password: formData.password,
         phone: formData.phone,
         preferredLanguage: formData.preferredLanguage,
         avatar: ''
       };
-
-      login(newUser);
+      
+      signup(newUser);
       navigate('/dashboard');
       setIsLoading(false);
     }, 1500);
@@ -62,7 +62,6 @@ export const SignupPage: React.FC = () => {
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div

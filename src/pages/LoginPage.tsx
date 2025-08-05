@@ -24,21 +24,16 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     setTimeout(() => {
-      const mockUser = {
-        id: 'user-123',
-        name: 'John Doe',
-        email: credentials.emailOrPhone.includes('@') ? credentials.emailOrPhone : 'john.doe@example.com',
-        phone: credentials.emailOrPhone.includes('@') ? '+1234567890' : credentials.emailOrPhone,
-        preferredLanguage: 'en',
-        avatar: ''
+      const loginUser = {
+        email: credentials.emailOrPhone,
+        password: credentials.password
       };
-
-      login(mockUser);
+      console.log(loginUser);
+      login(loginUser);
       navigate('/dashboard');
       setIsLoading(false);
     }, 1500);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div

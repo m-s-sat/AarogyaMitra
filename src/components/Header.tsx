@@ -10,6 +10,7 @@ import logo from '../assets/Logo.png'
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  console.log(user);
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -47,10 +48,18 @@ export const Header: React.FC = () => {
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center space-x-3 text-gray-700 hover:text-gray-900 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {user?.name.charAt(0).toUpperCase()}
-                      </span>
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center overflow-hidden">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt="Profile"
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : (
+                        <span className="text-white text-sm font-medium">
+                          {user?.name?.[0]?.toUpperCase()}
+                        </span>
+                      )}
                     </div>
                     <span className="font-medium">{user?.name}</span>
                   </button>
@@ -134,7 +143,7 @@ export const Header: React.FC = () => {
                     <div className="flex items-center space-x-3 text-gray-700">
                       <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">
-                          {user?.name.charAt(0).toUpperCase()}
+                          {user?.name?.toUpperCase()}
                         </span>
                       </div>
                       <span className="font-medium">{user?.name}</span>
