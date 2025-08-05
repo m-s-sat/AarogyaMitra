@@ -12,7 +12,9 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [useOTP, setUseOTP] = useState(false);
-
+  const handleGoogleRedirect = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
   const { login } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -186,7 +188,8 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors">
+              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors" onClick={handleGoogleRedirect}>
+
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"
                   alt="Google logo"

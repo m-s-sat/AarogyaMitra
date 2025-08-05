@@ -27,6 +27,9 @@ export const SignupPage: React.FC = () => {
   const { availableLanguages, t } = useLanguage();
   const navigate = useNavigate();
 
+  const handleGoogleRedirect = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -294,7 +297,7 @@ export const SignupPage: React.FC = () => {
 
             {/* Google Sign In */}
             <div className="mt-6 flex justify-center">
-              <button className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors">
+              <button onClick={handleGoogleRedirect} className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50 transition-colors">
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"
                   alt="Google logo"
