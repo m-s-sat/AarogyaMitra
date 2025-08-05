@@ -182,7 +182,7 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 w-full flex justify-center">
+            {/* <div className="mt-6 w-full flex justify-center">
               <button
                 onClick={handleGoogleRedirect}
                 className="w-full max-w-sm flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
@@ -195,7 +195,7 @@ export const LoginPage: React.FC = () => {
                 <span>Continue with Google</span>
               </button>
             </div>
-          </div>
+          </div> */}
 
           <p className="mt-8 text-center text-sm text-gray-600">
             Don't have an account?{' '}

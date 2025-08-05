@@ -27,7 +27,7 @@ const userSchema = new Schema({
     avatar:{
         type: String
     }
-});
+}, {timestamps: true});
 
 userSchema.set('toJSON', {
     transform: (doc, ret) => {
