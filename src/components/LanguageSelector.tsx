@@ -1,12 +1,16 @@
 'use client'
-import React, { useState } from 'react';
+import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const LanguageSelector: React.FC = () => {
+interface LanguageSelectorProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, setIsOpen }) => {
   const { currentLanguage, setLanguage, availableLanguages } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="relative">
@@ -35,7 +39,9 @@ export const LanguageSelector: React.FC = () => {
                   setIsOpen(false);
                 }}
                 className={`flex items-center space-x-3 px-4 py-2 text-left w-full hover:bg-gray-50 transition-colors ${
-                  currentLanguage.code === language.code ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                  currentLanguage.code === language.code
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-gray-700'
                 }`}
               >
                 <span className="text-lg">{language.flag}</span>

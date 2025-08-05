@@ -11,14 +11,16 @@ export const SignupPage: React.FC = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    preferredLanguage: 'en',
-    agreeToTerms: false
-  });
+  name: '',
+  email: '',
+  phone: '',
+  dob: '',
+  pincode: '',
+  password: '',
+  confirmPassword: '',
+  preferredLanguage: 'en',
+  agreeToTerms: false
+});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -148,7 +150,39 @@ export const SignupPage: React.FC = () => {
                 />
               </div>
             </div>
+            <div>
+  <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-2">
+    Date of Birth
+  </label>
+  <div className="relative">
+    <input
+      id="dob"
+      type="date"
+      required
+      value={formData.dob || ""}
+      onChange={(e) => handleInputChange('dob', e.target.value)}
+      className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+    />
+  </div>
+</div>
 
+{/* Location / Pincode */}
+<div>
+  <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-2">
+    Location / Pincode
+  </label>
+  <div className="relative">
+    <input
+      id="pincode"
+      type="text"
+      required
+      value={formData.pincode || ""}
+      onChange={(e) => handleInputChange('pincode', e.target.value)}
+      className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+      placeholder="Enter your area pincode"
+    />
+  </div>
+</div>
             {/* Preferred Language */}
             <div>
               <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-2">

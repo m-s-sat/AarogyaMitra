@@ -10,17 +10,20 @@ import { Dashboard } from './pages/Dashboard.tsx';
 import { AppointmentsPage } from './pages/AppointmentsPage.tsx';
 import { EmergencyPage } from './pages/EmergencyPage.tsx';
 import { ChatPage } from './pages/ChatPage.tsx';
-import { PasswordResetPage } from "./pages/PasswordResetPage.tsx";
+import { PasswordResetPage } from './pages/PasswordResetPage.tsx';
+import { ProfilePage } from './pages/ProfilePage.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null; // Or show loader
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 // Public Route Component (redirect to dashboard if authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null; // Or show loader
   return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" />;
 };
 
@@ -56,8 +59,12 @@ function AppContent() {
             }
           />
           <Route
-            path="/password-reset"
-            element={<PasswordResetPage />}
+            path="/reset-password"
+            element={
+              <PublicRoute>
+                <PasswordResetPage />
+              </PublicRoute>
+            }
           />
 
           {/* Protected Routes */}
@@ -108,6 +115,14 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          <Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  }
+/>
           <Route
             path="/medicines"
             element={

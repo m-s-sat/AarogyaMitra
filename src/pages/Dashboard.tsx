@@ -11,7 +11,8 @@ import {
   AlertTriangle,
   Activity,
   Users,
-  MapPin
+  MapPin,
+  Globe2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext';
@@ -23,6 +24,13 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const quickActions = [
+    {
+      icon: MessageCircle,
+      title: t('dashboard.quickActions.assistant'),
+      description: t('dashboard.quickActions.assistantDesc'),
+      onClick: () => navigate('/chat'),
+      gradient: 'bg-gradient-to-r from-pink-500 to-pink-600'
+    },
     {
       icon: Calendar,
       title: t('features.appointments'),
@@ -57,13 +65,6 @@ export const Dashboard: React.FC = () => {
       description: t('dashboard.quickActions.helpdeskDesc'),
       onClick: () => navigate('/helpdesk'),
       gradient: 'bg-gradient-to-r from-orange-500 to-orange-600'
-    },
-    {
-      icon: MessageCircle,
-      title: t('dashboard.quickActions.assistant'),
-      description: t('dashboard.quickActions.assistantDesc'),
-      onClick: () => navigate('/chat'),
-      gradient: 'bg-gradient-to-r from-pink-500 to-pink-600'
     }
   ];
 
@@ -261,39 +262,58 @@ export const Dashboard: React.FC = () => {
             </motion.div>
 
             {/* Coming Soon Features */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-            >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('landing.comingSoon.title')}</h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <Users className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.familyHealth')}</p>
-                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.familyHealthDesc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <Activity className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.wearableIntegration')}</p>
-                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.wearableIntegrationDesc')}</p>
-                  </div>
-                </div>
-                <div className="text-center mt-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
-                    {t('common.stayTuned')}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
+<motion.div
+  initial={{ opacity: 0, x: 20 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.6, delay: 0.7 }}
+  className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+>
+  <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('landing.comingSoon.title')}</h3>
+  <div className="space-y-3">
+    {/* Regional Languages */}
+     <div className="flex items-center space-x-3">
+      <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
+        <Globe2 className="w-4 h-4 text-orange-600" />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-900">Multiple Regional Languages</p>
+        <p className="text-xs text-gray-500">
+          Access MediMitra in various Indian languages for better reach and inclusivity.
+        </p>
+      </div>
+    </div>
+
+    {/* Family Health */}
+    <div className="flex items-center space-x-3">
+      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+        <Users className="w-4 h-4 text-orange-600" />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.familyHealth')}</p>
+        <p className="text-xs text-gray-500">{t('dashboard.comingSoon.familyHealthDesc')}</p>
+      </div>
+    </div>
+
+    {/* Wearable Integration */}
+    <div className="flex items-center space-x-3">
+      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+        <Activity className="w-4 h-4 text-orange-600" />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.wearableIntegration')}</p>
+        <p className="text-xs text-gray-500">{t('dashboard.comingSoon.wearableIntegrationDesc')}</p>
+      </div>
+    </div>
+
+    {/* Stay Tuned Badge */}
+    <div className="text-center mt-4">
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
+        {t('common.stayTuned')}
+      </span>
+    </div>
+  </div>
+</motion.div>
+
           </div>
         </div>
       </div>
