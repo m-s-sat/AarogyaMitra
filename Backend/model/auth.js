@@ -10,7 +10,6 @@ const userSchema = new Schema({
     preferredLanguage:{type: String, required: true},
     avatar:{type: String, default: ''},
     role:{type: String, default: 'patient'},
-    dob:{type: String, required: true},
     pincode: {type:Number},
     age: {type:String},
     gender: {type:String},
