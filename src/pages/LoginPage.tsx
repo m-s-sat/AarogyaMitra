@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Phone } from 'lucide-react';
@@ -54,6 +54,21 @@ export const LoginPage: React.FC = () => {
       setIsLoading(false);
     }, 1500);
   };
+
+  // Lock scroll + Esc key close
+  useEffect(() => {
+    if (showForgotModal) {
+      document.body.style.overflow = "hidden";
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setShowForgotModal(false);
+      };
+      window.addEventListener("keydown", handleEsc);
+      return () => {
+        document.body.style.overflow = "auto";
+        window.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [showForgotModal]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -146,7 +161,7 @@ export const LoginPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                   >
                     {showPassword
                       ? <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -169,8 +184,14 @@ export const LoginPage: React.FC = () => {
 
             {/* Forgot Password Modal */}
             {showForgotModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <div
+                className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center [&>*+*]:mt-0"
+                onClick={() => setShowForgotModal(false)}
+              >
+                <div
+                  className="bg-white p-6 rounded-lg shadow-lg w-96 [&>*+*]:!mt-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <h2 className="text-lg font-semibold mb-4">Reset Password</h2>
                   <p className="text-sm text-gray-600 mb-3">
                     Enter the email you have an account with.
