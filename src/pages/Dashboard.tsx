@@ -1,27 +1,58 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  FileText, 
-  Pill, 
-  Video, 
-  Phone, 
+import {
+  Calendar,
+  FileText,
+  Pill,
+  Video,
+  Phone,
   MessageCircle,
   AlertTriangle,
   Activity,
   Users,
   MapPin,
   Globe2,
+  CheckCircle,
+  ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext';
 import { QuickActionCard } from '../components/QuickActionCard';
+import { calculateCompletionPercentage } from '../utils/utils';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  // Mock profile data for calculation. This is required for the Profile Completion section.
+  const mockProfileData = {
+    name: user?.name || 'John Doe',
+    age: '30',
+    gender: 'male',
+    phone: user?.phone || '1234567890',
+    email: user?.email || 'john.doe@example.com',
+    emergencyContact: {
+      name: 'Jane Doe',
+      phone: '0987654321',
+      relationship: 'Spouse'
+    },
+    medicalHistory: {
+      pastIllnesses: ['Flu (2023)'],
+      ongoingConditions: ['Hypertension'],
+      allergies: ['Peanuts'],
+      currentMedications: ['Lisinopril 10mg']
+    },
+    bodyMeasurements: {
+      height: '175',
+      weight: '70',
+      bmi: '22.9'
+    }
+  };
+
+  const completionPercentage = calculateCompletionPercentage(user, mockProfileData);
+  const isProfileComplete = completionPercentage === 100;
 
   const quickActions = [
     {
@@ -103,6 +134,74 @@ export const Dashboard: React.FC = () => {
           </p>
         </motion.div>
 
+        {/* Profile Completion Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className={`relative p-6 sm:p-8 rounded-2xl shadow-xl overflow-hidden mb-8 transform hover:scale-[1.01] transition-transform duration-300
+            ${isProfileComplete ? 'bg-gradient-to-br from-green-400 to-blue-500 text-white' : 'bg-white text-gray-900 border border-gray-100'}`}
+        >
+          <div className="flex justify-between items-center z-10 relative">
+            <div>
+              <p className="text-sm font-semibold mb-1">
+                {isProfileComplete ? 'Profile Status' : 'Profile Completion'}
+              </p>
+              <h2 className={`text-2xl md:text-3xl font-bold
+                ${isProfileComplete ? 'text-white' : 'text-gray-900'}`}>
+                {isProfileComplete ? 'Your profile is complete!' : `${completionPercentage}% Completed`}
+              </h2>
+            </div>
+            {isProfileComplete ? (
+              <CheckCircle className="w-12 h-12 text-white opacity-90" />
+            ) : (
+              <div className="flex flex-col items-end">
+                <div className="relative w-20 h-20">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle
+                      className="text-gray-200"
+                      strokeWidth="6"
+                      stroke="currentColor"
+                      fill="transparent"
+                      r="34"
+                      cx="40"
+                      cy="40"
+                    />
+                    <motion.circle
+                      className="text-blue-500"
+                      strokeWidth="6"
+                      strokeDasharray={2 * Math.PI * 34}
+                      strokeDashoffset={2 * Math.PI * 34 * (1 - completionPercentage / 100)}
+                      strokeLinecap="round"
+                      stroke="currentColor"
+                      fill="transparent"
+                      r="34"
+                      cx="40"
+                      cy="40"
+                      initial={{ strokeDashoffset: 2 * Math.PI * 34 }}
+                      animate={{ strokeDashoffset: 2 * Math.PI * 34 * (1 - completionPercentage / 100) }}
+                      transition={{ duration: 1.5, ease: 'easeOut' }}
+                    />
+                  </svg>
+                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-gray-800">
+                    {completionPercentage}%
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/profile')}
+            className={`mt-4 px-6 py-2 rounded-full font-semibold flex items-center gap-2 transition-colors duration-300
+              ${isProfileComplete ? 'bg-white text-green-600 hover:bg-gray-100' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+          >
+            {isProfileComplete ? 'View Profile' : 'Complete Your Profile'}
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
+        </motion.div>
+
         {/* Health Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <motion.div
@@ -171,8 +270,9 @@ export const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Quick Actions */}
+          {/* Main Content Column */}
           <div className="lg:col-span-2">
+            {/* Quick Actions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -189,7 +289,6 @@ export const Dashboard: React.FC = () => {
                     description={action.description}
                     onClick={action.onClick}
                     gradient={action.gradient}
-                    delay={index * 0.1}
                   />
                 ))}
               </div>
@@ -225,7 +324,7 @@ export const Dashboard: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Column */}
           <div className="space-y-6">
             {/* Upcoming Appointments */}
             <motion.div
@@ -262,61 +361,67 @@ export const Dashboard: React.FC = () => {
             </motion.div>
 
             {/* Coming Soon Features */}
-<motion.div
-  initial={{ opacity: 0, x: 20 }}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{ duration: 0.6, delay: 0.7 }}
-  className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
->
-  <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('landing.comingSoon.title')}</h3>
-  <div className="space-y-3">
-    {/* Regional Languages */}
-     <div className="flex items-center space-x-3">
-      <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
-        <Globe2 className="w-4 h-4 text-orange-600" />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-gray-900">Multiple Regional Languages</p>
-        <p className="text-xs text-gray-500">
-          Access MediMitra in various Indian languages for better reach and inclusivity.
-        </p>
-      </div>
-    </div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('landing.comingSoon.title')}</h3>
+              <div className="space-y-3">
+                {/* Regional Languages */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Globe2 className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Multiple Regional Languages</p>
+                    <p className="text-xs text-gray-500">
+                      Access MediMitra in various Indian languages for better reach and inclusivity.
+                    </p>
+                  </div>
+                </div>
 
-    {/* Family Health */}
-    <div className="flex items-center space-x-3">
-      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-        <Users className="w-4 h-4 text-orange-600" />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.familyHealth')}</p>
-        <p className="text-xs text-gray-500">{t('dashboard.comingSoon.familyHealthDesc')}</p>
-      </div>
-    </div>
+                {/* Family Health */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Users className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.familyHealth')}</p>
+                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.familyHealthDesc')}</p>
+                  </div>
+                </div>
 
-    {/* Wearable Integration */}
-    <div className="flex items-center space-x-3">
-      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-        <Activity className="w-4 h-4 text-orange-600" />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.wearableIntegration')}</p>
-        <p className="text-xs text-gray-500">{t('dashboard.comingSoon.wearableIntegrationDesc')}</p>
-      </div>
-    </div>
+                {/* Wearable Integration */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Activity className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{t('dashboard.comingSoon.wearableIntegration')}</p>
+                    <p className="text-xs text-gray-500">{t('dashboard.comingSoon.wearableIntegrationDesc')}</p>
+                  </div>
+                </div>
 
-    {/* Stay Tuned Badge */}
-    <div className="text-center mt-4">
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
-        {t('common.stayTuned')}
-      </span>
-    </div>
-  </div>
-</motion.div>
-
+                {/* Stay Tuned Badge */}
+                <div className="text-center mt-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
+                    {t('common.stayTuned')}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
+
+      {/* Footer / Copyright Section */}
+      <footer className="w-full bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-gray-500">
+          © {new Date().getFullYear()} MediMitra. All Rights Reserved.
+        </div>
+      </footer>
     </div>
   );
 };
