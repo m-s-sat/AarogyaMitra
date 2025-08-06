@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Your MediMitra Password</title>
+  <style type="text/css">
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
+      }
+      .responsive-column {
+        display: block !important;
+        width: 100% !important;
+      }
+      .mobile-padding {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+      .button {
+        width: 90% !important;
+      }
+    }
+    
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 0;
+      color: #334155;
+    }
+    
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .header {
+      text-align: center;
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 600;
+      padding: 28px 30px;
+      background-color: #1e40af;
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    }
+    
+    .content {
+      padding: 30px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #475569;
+    }
+    
+    .button-container {
+      padding: 25px 0;
+      text-align: center;
+    }
+    
+    .button {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      text-align: center;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .button:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      box-shadow: 0 4px 8px rgba(30, 64, 175, 0.3);
+    }
+    
+    .divider {
+      border-top: 1px solid #e2e8f0;
+      margin: 28px 0;
+    }
+    
+    .footer {
+      padding: 22px 30px;
+      font-size: 13px;
+      text-align: center;
+      color: #64748b;
+      background-color: #f1f5f9;
+      line-height: 1.5;
+    }
+    
+    .footer-links {
+      margin-top: 12px;
+    }
+    
+    .footer-links a {
+      color: #475569;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 12px;
+    }
+    
+    .urgency-note {
+      color: #dc2626;
+      font-weight: 500;
+    }
+  </style>
+  <!--[if mso]>
+  <style type="text/css">
+    .button {
+      background-color: #2563eb !important;
+    }
+    .header {
+      background-color: #1e40af !important;
+    }
+  </style>
+  <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="center" valign="top">
+        <table class="email-container" border="0" cellpadding="0" cellspacing="0" width="600">
+          <tr>
+            <td class="header mobile-padding">
+              <img src="https://raw.githubusercontent.com/m-s-sat/AarogyaMitra/refs/heads/main/Backend/template/logo.jpg" alt="MediMitra Logo" width="180" style="display: block; margin: 0 auto 15px;"/>
+              Password Reset Request
+            </td>
+          </tr>
+          <tr>
+            <td class="content mobile-padding">
+              <p>Dear {{NAME}},</p>
+              <p>We received a request to reset the password for your MediMitra account associated with this email address.</p>
+              <div class="button-container">
+                <a href="{{RESET_LINK}}" class="button" target="_blank">Reset My Password</a>
+              </div>
+              <p style="text-align: center;">This link will expire in <span class="urgency-note">10 minutes</span>.</p>
+              <div class="divider"></div>
+              <p>If you didn't request this password reset, please:</p>
+              <ol>
+                <li>Ignore this email - your account remains secure</li>
+                <li>Review your account security settings</li>
+                <li>Contact our <a href="mailto:support@medimitra.com" style="color: #2563eb; text-decoration: underline;">support team</a> if you notice any suspicious activity</li>
+              </ol>
+              <p>For your security, we never store your password in plain text.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="footer mobile-padding">
+              <img src="https://example.com/medimitra-icon.png" alt="" width="24" style="vertical-align: middle; margin-right: 5px;"/>
+              <strong>MediMitra</strong> - Your Trusted Health Partner
+              <div class="footer-links">
+                <a href="#" target="_blank">Privacy</a> | 
+                <a href="#" target="_blank">Security</a> | 
+                <a href="#" target="_blank">Contact</a> | 
+                <a href="#" target="_blank">Unsubscribe</a>
+              </div>
+              <p style="margin-top: 15px; font-size: 12px; color: #94a3b8;">
+                © 2025 MediMitra. All rights reserved.<br/>
+                This email was sent to you as part of your MediMitra account.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

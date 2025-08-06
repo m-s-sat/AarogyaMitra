@@ -15,6 +15,10 @@ const userSchema = new Schema({
         type:String,
         required: true
     },
+    resetPasswordToken:{
+        type: String,
+        default:''
+    },
     phone:{
         type:String,
         required: true,
@@ -25,7 +29,27 @@ const userSchema = new Schema({
         required: true,
     },
     avatar:{
-        type: String
+        type: String,
+        default: ''
+    },
+    role:{
+        type: String,
+        default: 'patient'
+    },
+    appointment:{
+        type: [String],
+        default: []
+    },
+    medicines:{
+        type: [Object],
+        default: []
+    },
+    dob:{
+        type:String,
+        default: ''
+    },
+    pincode:{
+        type: Number
     }
 }, {timestamps: true});
 
