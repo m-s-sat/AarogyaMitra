@@ -43,6 +43,13 @@ const userSchema = new Schema({
     medicines:{
         type: [Object],
         default: []
+    },
+    dob:{
+        type:String,
+        default: ''
+    },
+    pincode:{
+        type: Number
     }
 }, {timestamps: true});
 

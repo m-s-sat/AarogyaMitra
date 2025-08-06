@@ -9,13 +9,13 @@ const path = require('path');
 
 const emailTemplate = fs.readFileSync(path.join(__dirname,'../template/emailTemplate.html'), 'utf-8');
 
-exports.createUser = (req, res)=>{
+exports.createUser = async(req, res)=>{
     try{
-        const { username, name, password, confirmPassword, phone, preferredLanguage, avatar } = req.body;
+        const { username, name, password, confirmPassword, phone, preferredLanguage, avatar, dob, pincode } = req.body; 
         if(password!==confirmPassword) return res.status(400).json('password did not match');
         bcrypt.hash(password, parseInt(process.env.SALT), async(err,hashedPassword)=>{
             if(err) return res.status(500).json('facing problem in hashing passsword');
-            const user = new User({username:username,name ,password:hashedPassword, phone, preferredLanguage, avatar});
+            const user = new User({username:username,name ,password:hashedPassword, phone, preferredLanguage, avatar, dob, pincode});
             await user.save();
             req.login(user, (err)=>{
                 if(err) res.status(401);
@@ -70,6 +70,7 @@ exports.setForgotPassToken = async(req,res)=>{
         const {email} = req.body;
         const user = await User.findOne({username:email});
         if(!user) return res.status(400).json({message:"user not found"});
+        if(user.password==='google') return res.status(400).json({message:"Your created account through the google, you can't change password. Please login through the google account."})
         const token = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = token;
         await user.save();
@@ -79,7 +80,7 @@ exports.setForgotPassToken = async(req,res)=>{
         html = html.replace('{{NAME}}', user.name);
         if(email){
             const response = await sendMail({to:email, subject, html});
-            return res.status(201).json(response);
+            return res.status(201).json({message:"We've sent a password reset link to the email address you provided."});
         }
         res.sendStatus(400);
     }

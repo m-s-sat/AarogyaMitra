@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 import logo from "../assets/Logo.png";
 
 export const PasswordResetPage: React.FC = () => {
@@ -14,11 +15,12 @@ export const PasswordResetPage: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const email = queryParams.get('email');
   const token = queryParams.get('token');
+  const { t } = useLanguage();
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
+      alert(t("passwordReset.passwordsMismatch"));
       return;
     }
     // Backend request to reset password here
@@ -32,6 +34,7 @@ export const PasswordResetPage: React.FC = () => {
       return
     };
     alert("Password successfully reset!");
+    alert(t("passwordReset.success"));
     navigate("/login");
   };
 
@@ -47,8 +50,12 @@ export const PasswordResetPage: React.FC = () => {
           <div className="flex justify-center mb-6">
             <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
-          <p className="text-gray-600">Enter and confirm your new password</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            {t("passwordReset.title")}
+          </h2>
+          <p className="text-gray-600">
+            {t("passwordReset.subtitle")}
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -56,7 +63,7 @@ export const PasswordResetPage: React.FC = () => {
             {/* New Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                New Password
+                {t("passwordReset.newPassword")}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -84,7 +91,7 @@ export const PasswordResetPage: React.FC = () => {
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+                {t("passwordReset.confirmPassword")}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -103,7 +110,7 @@ export const PasswordResetPage: React.FC = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700"
             >
-              Reset Password
+              {t("passwordReset.button")}
             </button>
           </form>
         </div>

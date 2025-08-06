@@ -1,26 +1,59 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Bell, Menu, X, User, LogOut, Settings, Trash2, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { LanguageSelector } from './LanguageSelector';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/Logo.png'
+import logo from '../assets/Logo.png';
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  console.log(user);
   const { t } = useLanguage();
   const navigate = useNavigate();
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: 'Your appointment is confirmed.', time: '2 min ago', read: false },
+    { id: 2, text: 'New health tip is available.', time: '10 min ago', read: false },
+    { id: 3, text: 'Password changed successfully.', time: '1 hr ago', read: true },
+  ]);
+
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const notificationsRef = useRef<HTMLDivElement | null>(null);
+  const languageRef = useRef<HTMLDivElement | null>(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setShowProfileMenu(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) {
+        setShowNotifications(false);
+      }
+      if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
+        setShowLanguageMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate('/');
     setShowProfileMenu(false);
   };
+
+  const clearAllNotifications = () => setNotifications([]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -36,14 +69,78 @@ export const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <LanguageSelector />
+            {/* Language Selector with outside click */}
+            <div ref={languageRef}>
+              <LanguageSelector
+                isOpen={showLanguageMenu}
+                setIsOpen={setShowLanguageMenu}
+              />
+            </div>
+
             {isAuthenticated ? (
               <>
-                <button className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                </button>
-                <div className="relative">
+                {/* Notifications */}
+                <div className="relative" ref={notificationsRef}>
+                  <button
+                    className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    onClick={() => setShowNotifications((prev) => !prev)}
+                  >
+                    <Bell className="w-5 h-5" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[3px] bg-gradient-to-r from-blue-500 to-emerald-500 text-white text-xs font-medium rounded-full flex items-center justify-center shadow">
+                        {notifications.length > 9 ? '9+' : notifications.length}
+                      </span>
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {showNotifications && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50"
+                      >
+                        <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-blue-50 to-emerald-50">
+                          <span className="font-semibold text-gray-800 text-sm">Notifications</span>
+                          {notifications.length > 0 && (
+                            <button
+                              onClick={clearAllNotifications}
+                              className="text-xs text-blue-600 hover:text-emerald-600 font-medium flex items-center space-x-1"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Clear All</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {notifications.length > 0 ? (
+                          <div className="max-h-64 overflow-y-auto">
+                            {notifications.map((n) => (
+                              <div
+                                key={n.id}
+                                className="px-4 py-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-emerald-50 transition-colors"
+                              >
+                                <span className="text-sm text-gray-700">{n.text}</span>
+                                <div className="flex items-center text-xs text-gray-400 mt-1">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {n.time}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="px-4 py-6 text-center text-gray-400 text-sm">
+                            No new notifications
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Profile Menu */}
+                <div className="relative" ref={profileMenuRef}>
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center space-x-3 text-gray-700 hover:text-gray-900 transition-colors"
@@ -102,10 +199,7 @@ export const Header: React.FC = () => {
               </>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link
-                  to="/login"
-                  className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-                >
+                <Link to="/login" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                   {t('nav.login')}
                 </Link>
                 <Link
@@ -137,7 +231,12 @@ export const Header: React.FC = () => {
               className="md:hidden border-t border-gray-200 py-4"
             >
               <div className="space-y-4">
-                <LanguageSelector />
+                <div ref={languageRef}>
+                  <LanguageSelector
+                    isOpen={showLanguageMenu}
+                    setIsOpen={setShowLanguageMenu}
+                  />
+                </div>
                 {isAuthenticated ? (
                   <>
                     <div className="flex items-center space-x-3 text-gray-700">
