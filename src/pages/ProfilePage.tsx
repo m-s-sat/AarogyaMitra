@@ -50,7 +50,7 @@ import React, { useState, useRef } from 'react';
       export const ProfilePage: React.FC = () => {
         const { user } = useAuth();
         const fileInputRef = useRef<HTMLInputElement>(null);
-        
+        console.log(user?.age);
         const [activeTab, setActiveTab] = useState<'basic' | 'medical' | 'measurements' | 'documents' | 'tracker'>('basic');
         const [isEditing, setIsEditing] = useState(false);
         const [profileData, setProfileData] = useState<ProfileData>({

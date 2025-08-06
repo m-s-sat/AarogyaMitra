@@ -86,10 +86,10 @@ passport.use("google",
 )
 
 passport.serializeUser((user, cb)=>{
-    cb(null, {id:user.id, username: user.username, name:user.name, phone:user.phone, preferredLanguage:user.preferredLanguage, avatar:user.avatar});
+    cb(null, user);
 });
 passport.deserializeUser((user, cb)=>{
-    cb(null, {id:user.id, username: user.username, name:user.name, phone:user.phone, preferredLanguage:user.preferredLanguage, avatar:user.avatar});
+    cb(null, user);
 });
 
 async function main(){
