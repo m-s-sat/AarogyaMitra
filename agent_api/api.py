@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from bot import graph,chat,get_current_datetime_response
@@ -6,6 +7,19 @@ from langchain_core.messages import HumanMessage
 import asyncio
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:5173", # Common port for Vite React apps
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 static_sys = """You are a healthcare assistant. Respond to any query of the patient related to health and diseases"""
 dynamic_sys= get_current_datetime_response()

@@ -1,8 +1,10 @@
 'use client'
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Bot, User } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -12,6 +14,58 @@ interface Message {
   language: string;
   isVoice?: boolean;
 }
+
+// --- Helper Function for Streaming API Call ---
+/**
+ * Fetches a streaming response from the backend.
+ * @param userMessage The message to send to the backend.
+ * @param onChunk A callback function that handles each received text chunk.
+ * @param onEnd A callback function that runs when the stream is finished.
+ */
+const generateStreamingResponse = async (
+  userMessage: string,
+  onChunk: (chunk: string) => void,
+  onEnd: () => void
+) => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/chat_message', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+      },
+      // Sending as a JSON object is more standard for APIs
+      body: JSON.stringify({ message: userMessage , id:'mrinal'}),
+    });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`API Error: ${response.statusText}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break; // Exit the loop when the stream is done
+      }
+      // Decode the chunk and pass it to the callback
+      const chunkText = decoder.decode(value);
+      // Optional: Clean SSE "data: " prefix if your backend sends it
+      const cleanedChunk = chunkText.replace(/^data: /, '').trim();
+      if(cleanedChunk) {
+        onChunk(cleanedChunk);
+      }
+    }
+  } catch (error) {
+    console.error("Streaming failed:", error);
+    onChunk("Sorry, an error occurred while generating the response.");
+  } finally {
+    onEnd(); // Signal that the process is complete
+  }
+};
+
 
 export const ChatPage: React.FC = () => {
   const { currentLanguage, t } = useLanguage();
@@ -40,47 +94,54 @@ export const ChatPage: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const generateResponse = (userMessage: string): string => {
-    const responses = [
-      t('chat.responses.consultProfessional'),
-      t('chat.responses.monitorSymptoms'),
-      t('chat.responses.notReplaceAdvice'),
-      t('chat.responses.proactive', { language: currentLanguage.nativeName }),
-      t('chat.responses.findProviders')
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-  };
-
   const handleSendMessage = async () => {
-    if (!inputText.trim()) return;
+    const trimmedInput = inputText.trim();
+    if (!trimmedInput) return;
 
+    // 1. Add the user's message to the chat
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputText,
+      text: trimmedInput,
       sender: 'user',
       timestamp: new Date(),
       language: currentLanguage.code
     };
-
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
     setIsLoading(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: generateResponse(inputText),
-        sender: 'assistant',
-        timestamp: new Date(),
-        language: currentLanguage.code
-      };
+    // 2. Add a placeholder for the assistant's response
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      text: '', // Start with empty text
+      sender: 'assistant',
+      timestamp: new Date(),
+      language: currentLanguage.code
+    };
+    setMessages(prev => [...prev, assistantMessage]);
 
-      setMessages(prev => [...prev, assistantMessage]);
-      setIsLoading(false);
-    }, 1500);
+    // 3. Call the streaming function
+    await generateStreamingResponse(
+      trimmedInput,
+      // onChunk: This function appends new text to the assistant's message
+      (chunk: string) => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantMessageId
+              ? { ...msg, text: msg.text + chunk }
+              : msg
+          )
+        );
+      },
+      // onEnd: This function runs when the stream is fully received
+      () => {
+        setIsLoading(false);
+        inputRef.current?.focus(); // Focus the input field when done
+      }
+    );
   };
+
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -152,7 +213,7 @@ export const ChatPage: React.FC = () => {
                 <div className={`flex items-start space-x-3 max-w-3xl ${
                   message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                 }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     message.sender === 'user'
                       ? 'bg-blue-600'
                       : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
@@ -168,7 +229,13 @@ export const ChatPage: React.FC = () => {
                       ? 'bg-blue-600 text-white'
                       : 'bg-white text-gray-900 shadow-sm border border-gray-200'
                   }`}>
-                    <p className="text-sm leading-relaxed">{message.text}</p>
+                    {/* The whitespace-pre-wrap is important for rendering newlines from the stream */}
+                    <div className="prose prose-sm max-w-none text-sm leading-relaxed whitespace-pre-wrap">
+                      <ReactMarkdown>
+                        {message.text}
+                      </ReactMarkdown>
+                    </div>
+
                     <p className={`text-xs mt-2 ${
                       message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
@@ -185,7 +252,7 @@ export const ChatPage: React.FC = () => {
           </AnimatePresence>
 
           {/* Loading indicator */}
-          {isLoading && (
+          {isLoading && messages[messages.length - 1]?.sender === 'user' && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
