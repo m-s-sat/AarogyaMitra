@@ -88,3 +88,17 @@ exports.setForgotPassToken = async(req,res)=>{
         res.status(400);
     }
 }
+
+exports.updateProfile = async(req,res)=>{
+    try{
+        const {id} = req.user;
+        const updateProfile = req.body;
+        if(!updateProfile) return res.status(400).json({message:'Unable to fetch your data'});
+        const user = await User.findOneAndUpdate({_id:id},updateProfile);
+        if(!user) return res.status(500).json({message:'Unable to fetch your data in our database.'});
+        res.status(200).json({message:"Your profile has been updated"});
+    }
+    catch(err){
+        res.status(400).json('unable to update your profile');
+    }
+}

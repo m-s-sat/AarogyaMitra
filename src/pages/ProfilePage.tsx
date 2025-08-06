@@ -55,25 +55,25 @@ import React, { useState, useRef } from 'react';
         const [isEditing, setIsEditing] = useState(false);
         const [profileData, setProfileData] = useState<ProfileData>({
           name: user?.name || '',
-          age: '28',
-          gender: 'male',
+          age: user?.age || '',
+          gender: user?.gender || '',
           phone: user?.phone || '',
           email: user?.email || '',
           emergencyContact: {
-            name: 'Jane Doe',
-            phone: '+1234567890',
-            relationship: 'Spouse'
+            name: user?.emergencyContact?.name || '',
+            phone: user?.emergencyContact?.phone || '',
+            relationship: user?.emergencyContact?.relationship || ''
           },
           medicalHistory: {
-            pastIllnesses: ['Flu (2023)', 'Broken arm (2020)'],
-            ongoingConditions: ['Hypertension'],
-            allergies: ['Peanuts', 'Shellfish'],
-            currentMedications: ['Lisinopril 10mg', 'Vitamin D3']
+            pastIllnesses: user?.medicalHistory?.pastIllnesses || [],
+            ongoingConditions: user?.medicalHistory?.ongoingConditions || [],
+            allergies: user?.medicalHistory?.allergies || [],
+            currentMedications: user?.medicalHistory?.currentMedications || []
           },
           bodyMeasurements: {
-            height: '175',
-            weight: '70',
-            bmi: '22.9'
+            height: user?.bodyMeasurements?.height || '',
+            weight: user?.bodyMeasurements?.weight || '',
+            bmi: user?.bodyMeasurements?.bmi || ''
           }
         });
       
@@ -118,7 +118,15 @@ import React, { useState, useRef } from 'react';
       
         const completionPercentage = calculateCompletionPercentage();
       
-        const handleSave = () => {
+        const handleSave = async() => {
+          const response = await fetch('http://localhost:5000/auth/profileupdate',{
+            credentials: 'include',
+            method: 'PATCH',
+            headers: {'content-type':'application/json'},
+            body: JSON.stringify(profileData)
+          })
+          const data = await response.json();
+          alert(data.message);
           setIsEditing(false);
           // Here you would save to backend
         };
@@ -306,6 +314,7 @@ import React, { useState, useRef } from 'react';
                               disabled={!isEditing}
                               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                             >
+                              <option value={''} disabled>Select Gender</option>
                               <option value="male">Male</option>
                               <option value="female">Female</option>
                               <option value="other">Other</option>

@@ -2,55 +2,21 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-    username:{
-        type:String,
-        required: true,
-        unique: true
-    },
-    name:{
-        type:String,
-        required:true
-    },
-    password:{
-        type:String,
-        required: true
-    },
-    resetPasswordToken:{
-        type: String,
-        default:''
-    },
-    phone:{
-        type:String,
-        required: true,
-        unique: true
-    },
-    preferredLanguage:{
-        type: String,
-        required: true,
-    },
-    avatar:{
-        type: String,
-        default: ''
-    },
-    role:{
-        type: String,
-        default: 'patient'
-    },
-    appointment:{
-        type: [String],
-        default: []
-    },
-    medicines:{
-        type: [Object],
-        default: []
-    },
-    dob:{
-        type:String,
-        default: ''
-    },
-    pincode:{
-        type: Number
-    }
+    username:{type:String, required: true, unique: true},
+    name:{type:String, required:true},
+    password:{type:String, required: true},
+    resetPasswordToken:{type: String, default:''},
+    phone:{type:String, required: true, unique: true},
+    preferredLanguage:{type: String, required: true},
+    avatar:{type: String, default: ''},
+    role:{type: String, default: 'patient'},
+    dob:{type: String, required: true},
+    pincode: {type:Number},
+    age: {type:String},
+    gender: {type:String},
+    emergencyContact: {type:Object},
+    medicalHistory: {type:Object},
+    bodyMeasurements: {type:Object},
 }, {timestamps: true});
 
 userSchema.set('toJSON', {

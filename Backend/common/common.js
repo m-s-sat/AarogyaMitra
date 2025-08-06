@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 exports.isAuth = (req,res,next)=>{
-    if(req.user) next();
-    else return res.sendStatus(401);
+    if(req.isAuthenticated()) return next();
+    res.status(400).json({message:'Unauthorized'});
 }
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",

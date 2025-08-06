@@ -54,7 +54,6 @@ export const SignupPage: React.FC = () => {
         preferredLanguage: formData.preferredLanguage,
         avatar: '',
         dob: formData.dob,
-        pincode: +formData.pincode
       };
       
       signup(newUser);
