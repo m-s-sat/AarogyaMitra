@@ -5,6 +5,8 @@ export interface User {
   preferredLanguage: string;
   avatar?: string;
   password?:string;
+  dob?:string,
+  pincode?:Number
 }
 
 export interface UserQuery{

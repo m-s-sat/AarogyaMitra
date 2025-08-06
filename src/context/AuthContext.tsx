@@ -86,6 +86,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       phone: userData.phone,
       preferredLanguage: userData.preferredLanguage,
       avatar: userData.avatar,
+      dob: userData.dob,
+      pincode: userData.pincode
     };
     const response = await fetch('http://localhost:5000/auth/register', {
       method: 'POST',

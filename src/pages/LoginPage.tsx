@@ -29,16 +29,15 @@ export const LoginPage: React.FC = () => {
       return;
     }
     setIsSendLoading(true)
-    // setShowForgotModal(false);
-    // navigate("/password-reset");
     const response = await fetch('http://localhost:5000/auth/reset-request',{
       method: "POST",
       headers: {'content-type':'application/json'},
       body: JSON.stringify({email:email}),
     })
-    setIsLoading(false);
-    if(!response.ok) alert('email not sent');
-    else alert('email sent');
+    const data = await response.json();
+    alert(data.message);
+    setIsSendLoading(false);
+    return
 };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

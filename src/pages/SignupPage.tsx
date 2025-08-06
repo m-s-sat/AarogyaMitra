@@ -52,7 +52,9 @@ export const SignupPage: React.FC = () => {
         password: formData.password,
         phone: formData.phone,
         preferredLanguage: formData.preferredLanguage,
-        avatar: ''
+        avatar: '',
+        dob: formData.dob,
+        pincode: +formData.pincode
       };
       
       signup(newUser);
