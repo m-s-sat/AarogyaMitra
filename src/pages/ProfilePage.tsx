@@ -266,16 +266,16 @@ export const ProfilePage: React.FC = () => {
               <div className="text-center mb-6">
                 <div className="relative inline-block">
                   <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center mb-3">
-                    <span className="text-white text-2xl font-bold">
+                    {user?.avatar ? <img src={user.avatar} alt="User photo" className="w-full h-full object-cover rounded-full"></img> :<span className="text-white text-2xl font-bold">
                       {profileData.name.charAt(0).toUpperCase()}
-                    </span>
+                    </span>}
                   </div>
-                  <button
+                  {user?.password==='google'? null: <button
                     onClick={handleFileUpload}
                     className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
                   >
                     <Camera className="w-4 h-4" />
-                  </button>
+                  </button>}
                   <input
                     ref={fileInputRef}
                     type="file"
