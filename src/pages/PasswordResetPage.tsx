@@ -24,7 +24,7 @@ export const PasswordResetPage: React.FC = () => {
       return;
     }
     // Backend request to reset password here
-    const response = await fetch('http://localhost:5000/auth/password-reset',{
+    const response = await fetch('/auth/password-reset',{
       method:"POST",
       headers: {'content-type':'application/json'},
       body: JSON.stringify({password:newPassword, confirmPassword:confirmPassword, token:token, email:email}),
