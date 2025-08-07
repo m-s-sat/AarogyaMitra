@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, Phone, Globe, Users, Building2, Stethoscope } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Phone, Globe, Building2, Stethoscope } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 export const SignupPage: React.FC = () => {
