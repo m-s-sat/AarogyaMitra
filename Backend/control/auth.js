@@ -19,6 +19,7 @@ exports.createUser = async(req, res)=>{
             await user.save();
             req.login(user, (err)=>{
                 if(err) res.status(401);
+                console.log(req.user);
                 res.json(user);
             })
         });

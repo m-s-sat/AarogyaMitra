@@ -10,6 +10,7 @@ export interface User {
 }
 
 export interface UserQuery{
+  role: string | null,
   email: string,
   password: string
 }

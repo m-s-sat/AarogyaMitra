@@ -1,6 +1,7 @@
   import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Select from 'react-select';
 import { 
   Building2, 
   MapPin, 
@@ -15,7 +16,10 @@ import {
   ArrowLeft,
   Search
 } from 'lucide-react';
-
+interface SelectOption {
+  value: string;
+  label: string;
+}
 // Mock data for states and districts
 const statesData = {
   'maharashtra': {
@@ -261,65 +265,58 @@ export const HospitalSignupPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Step 1: State Selection */}
           {currentStep === 1 && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <h3 className="text-xl font-semibold text-gray-900">Select State</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(statesData).map(([key, state]) => (
-                  <button
-                    key={key}
-                    onClick={() => handleStateChange(key)}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition-colors text-left"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-5 h-5 text-blue-600" />
-                      <span className="font-medium text-gray-900">{state.name}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
+  <motion.div
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="space-y-6"
+  >
+    <h3 className="text-xl font-semibold text-gray-900">Select State</h3>
+    <Select
+      options={Object.entries(statesData).map(([key, state]) => ({
+        value: key,
+        label: state.name
+      }))}
+      onChange={(option) => {
+        if (option) handleStateChange(option.value);
+      }}
+      placeholder="Search and select a state..."
+      isSearchable
+    />
+  </motion.div>
+)}
 
-          {/* Step 2: District Selection */}
-          {currentStep === 2 && selectedState && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Select District in {statesData[selectedState as keyof typeof statesData].name}
-                </h3>
-                <button
-                  onClick={() => setCurrentStep(1)}
-                  className="text-blue-600 hover:text-blue-700"
-                >
-                  Change State
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {statesData[selectedState as keyof typeof statesData].districts.map((district) => (
-                  <button
-                    key={district}
-                    onClick={() => handleDistrictChange(district)}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition-colors text-left"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-5 h-5 text-blue-600" />
-                      <span className="font-medium text-gray-900">{district}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
+{currentStep === 2 && selectedState && (
+  <motion.div
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="space-y-6"
+  >
+    <div className="flex items-center justify-between">
+      <h3 className="text-xl font-semibold text-gray-900">
+        Select District in {statesData[selectedState as keyof typeof statesData].name}
+      </h3>
+      <button
+        onClick={() => setCurrentStep(1)}
+        className="text-blue-600 hover:text-blue-700"
+      >
+        Change State
+      </button>
+    </div>
+    <Select
+      options={statesData[selectedState as keyof typeof statesData].districts.map(district => ({
+        value: district,
+        label: district
+      }))}
+      onChange={(option) => {
+        if (option) handleDistrictChange(option.value);
+      }}
+      placeholder="Search and select a district..."
+      isSearchable
+    />
+  </motion.div>
+)}
+
 
           {/* Step 3: Hospital Selection */}
           {currentStep === 3 && selectedDistrict && (
