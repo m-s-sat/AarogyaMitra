@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/getuser', {
+        const response = await fetch('/auth/getuser', {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (userData: UserQuery) => {
     const main = { username: userData.email, password: userData.password };
-    const response = await fetch('http://localhost:5000/auth/login', {
+    const response = await fetch('/auth/login', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       credentials: 'include',
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       dob: userData.dob,
       pincode: userData.pincode
     };
-    const response = await fetch('http://localhost:5000/auth/register', {
+    const response = await fetch('/auth/register', {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json' },
@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    const response = await fetch('http://localhost:5000/auth/logout', {
+    const response = await fetch('/auth/logout', {
       credentials: 'include',
     });
     if (!response.ok) throw new Error('Unable to logout the user');

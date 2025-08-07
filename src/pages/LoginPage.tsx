@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGoogleRedirect = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = '/auth/google';
   };
 
   const handleSendLink = async() => {
@@ -29,7 +29,7 @@ export const LoginPage: React.FC = () => {
       return;
     }
     setIsSendLoading(true)
-    const response = await fetch('http://localhost:5000/auth/reset-request',{
+    const response = await fetch('/auth/reset-request',{
       method: "POST",
       headers: {'content-type':'application/json'},
       body: JSON.stringify({email:email}),

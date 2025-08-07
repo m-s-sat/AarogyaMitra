@@ -18,7 +18,7 @@ export const SignupPage: React.FC = () => {
     agreeToTerms: false
   });
   const handleGoogleRedirect = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = '/auth/google';
   };
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

@@ -126,7 +126,7 @@ export const ProfilePage: React.FC = () => {
   const completionPercentage = calculateCompletionPercentage();
 
   const handleSave = async () => {
-    const response = await fetch("http://localhost:5000/auth/profileupdate", {
+    const response = await fetch("/auth/profileupdate", {
       credentials: "include",
       method: "PATCH",
       headers: { "content-type": "application/json" },
