@@ -9,7 +9,7 @@ const userSchema = new Schema({
     phone:{type:String, required: true, unique: true},
     preferredLanguage:{type: String, required: true},
     avatar:{type: String, default: ''},
-    role:{type: String, default: 'patient'},
+    role:{type: String, required: true},
     pincode: {type:Number},
     age: {type:String},
     gender: {type:String},

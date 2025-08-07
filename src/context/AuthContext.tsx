@@ -1,6 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserQuery } from '../types';
+import { redirect } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -62,15 +63,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (userData: UserQuery) => {
-    const main = { username: userData.email, password: userData.password };
+    const main = { username: userData.email, password: userData.password, role: userData.role };
     const response = await fetch('/auth/login', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(main),
     });
-    if (!response.ok) throw new Error('Unauthorized');
-
+    if (!response.ok){
+      alert('Unauthorized! Please login again with proper credentials');
+      throw new Error('Unauthorized');
+    }
     const data = await response.json();
     setUser(data);
     localStorage.setItem('healthcare_user', JSON.stringify(data));
@@ -87,7 +90,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       preferredLanguage: userData.preferredLanguage,
       avatar: userData.avatar,
       dob: userData.dob,
-      pincode: userData.pincode
+      pincode: userData.pincode,
+      role: userData.role
     };
     const response = await fetch('/auth/register', {
       method: 'POST',

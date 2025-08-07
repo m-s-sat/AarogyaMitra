@@ -41,7 +41,6 @@ passport.use("local", new localStrategy(async function verify(username, password
                 { phone: username }
             ]
         });
-        console.log(user);
         if(!user) return done(null, false, {message:"Invalid Username or Password"});
         bcrypt.compare(password, user.password, (err, result)=>{
             if(err) return done(err, false);
@@ -59,7 +58,7 @@ passport.use("google",
         clientSecret:process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: '/auth/google/callback',
         userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
-    }, async(accessToken, refreshToken, profile, done)=>{
+    }, async(req, accessToken, refreshToken, profile, done)=>{
         try{
             const user = await User.findOne({username:profile.email});
             const min = 1000000000;
@@ -72,11 +71,13 @@ passport.use("google",
                     name: profile.displayName,
                     avatar: profile.picture,
                     preferredLanguage: 'en',
-                    phone: String(randomNumber)
+                    phone: String(randomNumber),
+                    role: 'patient'
                 })
                 await newUser.save();
                 return done(null, newUser);
             }
+            
             return done(null, user);
         }
         catch(err){
@@ -105,7 +106,6 @@ main().then(()=>{
 server.use('/auth',authRouter.router);
 
 server.get('/',isAuth,(req,res)=>{
-    console.log(req.user);
     res.json('hello this is login page');
 })
 

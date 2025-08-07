@@ -62,8 +62,9 @@ export const SignupPage: React.FC = () => {
         password: formData.password,
         preferredLanguage: formData.preferredLanguage,
         avatar: '',
+        role: selectedRole
       };
-
+      console.log(newUser)
       signup(newUser);
       navigate('/dashboard');
       setIsLoading(false);

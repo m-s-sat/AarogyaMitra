@@ -12,7 +12,7 @@ router
         scope: ["profile", "email"]
     }))
     .get('/google/callback', passport.authenticate("google"), (req,res)=>{
-        console.log(req.user);
+
         res.redirect('http://localhost:5173/dashboard')
     })
     .post('/reset-request',setForgotPassToken)

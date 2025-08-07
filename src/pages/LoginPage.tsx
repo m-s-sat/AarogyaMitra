@@ -53,7 +53,6 @@ export const LoginPage: React.FC = () => {
         email: credentials.emailOrPhone,
         password: credentials.password
       };
-      console.log("Login Payload:", loginUser);
       login(loginUser);
 
       // Redirect based on role
@@ -62,7 +61,6 @@ export const LoginPage: React.FC = () => {
       } else {
         navigate('/dashboard');
       }
-
       setIsLoading(false);
     }, 1500);
   };
@@ -256,7 +254,7 @@ export const LoginPage: React.FC = () => {
               </button>
 
               {/* Google Sign-In */}
-              <div className="mt-6 flex justify-center">
+              {selectedRole==='patient' && <div className="mt-6 flex justify-center">
                 <button
                   onClick={handleGoogleRedirect}
                   className="flex items-center border border-gray-300 rounded-lg shadow-sm px-4 py-2 bg-white hover:bg-gray-50"
@@ -264,7 +262,7 @@ export const LoginPage: React.FC = () => {
                   <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className="w-5 h-5 mr-3" />
                   <span className="text-gray-700 font-medium">{t('login.googleSignIn')}</span>
                 </button>
-              </div>
+              </div>}
 
               {/* Signup Link */}
               <p className="mt-8 text-center text-sm text-gray-600">

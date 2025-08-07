@@ -25,6 +25,7 @@ export interface User {
   };
   age?: string;
   gender?: string;
+  role?: string;
 }
 
 export interface UserQuery{

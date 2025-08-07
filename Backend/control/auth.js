@@ -11,15 +11,14 @@ const emailTemplate = fs.readFileSync(path.join(__dirname,'../template/emailTemp
 
 exports.createUser = async(req, res)=>{
     try{
-        const { username, name, password, confirmPassword, phone, preferredLanguage, avatar, dob, pincode } = req.body; 
+        const { username, name, password, confirmPassword, phone, preferredLanguage, avatar, dob, pincode, role } = req.body; 
         if(password!==confirmPassword) return res.status(400).json('password did not match');
         bcrypt.hash(password, parseInt(process.env.SALT), async(err,hashedPassword)=>{
             if(err) return res.status(500).json('facing problem in hashing passsword');
-            const user = new User({username:username,name ,password:hashedPassword, phone, preferredLanguage, avatar, dob, pincode});
+            const user = new User({username, name, password:hashedPassword, phone, preferredLanguage, avatar, dob, pincode, role});
             await user.save();
             req.login(user, (err)=>{
                 if(err) res.status(401);
-                console.log(req.user);
                 res.json(user);
             })
         });
@@ -29,7 +28,10 @@ exports.createUser = async(req, res)=>{
     }
 }
 exports.loginUser = (req,res)=>{
-    if(req.user) return res.status(200).json(req.user);
+    if(req.user){
+        if(req.user.role!==req.body.role) return res.status(401).json('unauthorized');
+        return res.status(200).json(req.user);
+    }
     res.status(401).json('unauthorized')
 }
 exports.getUser = (req, res)=>{
@@ -55,7 +57,6 @@ exports.forgotpass = async(req,res)=>{
         if(token!==user.resetPasswordToken) return res.status(401).json({message:'unauthorized'});
         bcrypt.hash(password, parseInt(process.env.SALT), async(err,hashedPassword)=>{
             if(err) return res.status(500).json({message:"hashing problem"});
-            console.log(user.password);
             user.password = hashedPassword;
             await user.save();
             return res.status(200).json({message:"password change successfully"});
@@ -75,7 +76,7 @@ exports.setForgotPassToken = async(req,res)=>{
         const token = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = token;
         await user.save();
-        const resetPageLink = 'http://localhost:5173/password-reset/?token='+token+'&email='+email;
+        const resetPageLink = '/password-reset/?token='+token+'&email='+email;
         const subject = 'Reset password for your medimitra account';
         let html = emailTemplate.replace('{{RESET_LINK}}', resetPageLink);
         html = html.replace('{{NAME}}', user.name);
