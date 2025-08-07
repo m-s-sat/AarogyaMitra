@@ -28,26 +28,26 @@ export const Dashboard: React.FC = () => {
 
   // Mock profile data for calculation. This is required for the Profile Completion section.
   const mockProfileData = {
-    name: user?.name || 'John Doe',
-    age: '30',
-    gender: 'male',
-    phone: user?.phone || '1234567890',
-    email: user?.email || 'john.doe@example.com',
+    name: user?.name || '',
+    age: user?.age || '',
+    gender: user?.gender || '',
+    phone: user?.phone || '',
+    email: user?.email || '',
     emergencyContact: {
-      name: 'Jane Doe',
-      phone: '0987654321',
-      relationship: 'Spouse'
+      name: user?.emergencyContact?.name || '',
+      phone: user?.emergencyContact?.phone || '',
+      relationship: user?.emergencyContact?.relationship || ''
     },
     medicalHistory: {
-      pastIllnesses: ['Flu (2023)'],
-      ongoingConditions: ['Hypertension'],
-      allergies: ['Peanuts'],
-      currentMedications: ['Lisinopril 10mg']
+      pastIllnesses: user?.medicalHistory?.pastIllnesses || [],
+      ongoingConditions: user?.medicalHistory?.ongoingConditions || [],
+      allergies: user?.medicalHistory?.allergies || [],
+      currentMedications: user?.medicalHistory?.currentMedications || []
     },
     bodyMeasurements: {
-      height: '175',
-      weight: '70',
-      bmi: '22.9'
+      height: user?.bodyMeasurements?.height,
+      weight: user?.bodyMeasurements?.weight,
+      bmi: user?.bodyMeasurements?.bmi
     }
   };
 
