@@ -58,7 +58,7 @@ passport.use("google",
         clientSecret:process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: '/auth/google/callback',
         userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
-    }, async(req, accessToken, refreshToken, profile, done)=>{
+    }, async(accessToken, refreshToken, profile, done)=>{
         try{
             const user = await User.findOne({username:profile.email});
             const min = 1000000000;

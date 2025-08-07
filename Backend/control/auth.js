@@ -95,12 +95,25 @@ exports.updateProfile = async(req,res)=>{
     try{
         const {id} = req.user;
         const updateProfile = req.body;
+        console.log(updateProfile);
         if(!updateProfile) return res.status(400).json({message:'Unable to fetch your data'});
-        const user = await User.findOneAndUpdate({_id:id},updateProfile);
+        const user = await User.findOneAndUpdate({_id:id},updateProfile,{new:true});
         if(!user) return res.status(500).json({message:'Unable to fetch your data in our database.'});
-        res.status(200).json({message:"Your profile has been updated"});
+        await new Promise((resolve, reject) => {
+        req.login(user, (err) => {
+            if (err) {
+                reject(err);
+            }
+                resolve();
+            });
+        });
+        return res.status(200).json({
+            data: user,
+            message: "Your profile has been updated",
+        });
     }
     catch(err){
-        res.status(400).json('unable to update your profile');
+        console.error("Profile Update Error:", err)
+        res.status(500).json({ message: "An error occurred while updating your profile." });
     }
 }

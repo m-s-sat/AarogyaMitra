@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   User,
@@ -43,36 +43,56 @@ interface ProfileData {
 }
 
 export const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log(user?.age);
   const [activeTab, setActiveTab] = useState<
     "basic" | "medical" | "measurements" | "documents" | "tracker"
   >("basic");
   const [isEditing, setIsEditing] = useState(false);
+
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: user?.name || "",
-    age: user?.age || "",
-    gender: user?.gender || "",
-    phone: user?.phone || "",
-    email: user?.email || "",
-    emergencyContact: {
-      name: user?.emergencyContact?.name || "",
-      phone: user?.emergencyContact?.phone || "",
-      relationship: user?.emergencyContact?.relationship || "",
-    },
+    name: "",
+    age: "",
+    gender: "",
+    phone: "",
+    email: "",
+    emergencyContact: { name: "", phone: "", relationship: "" },
     medicalHistory: {
-      pastIllnesses: user?.medicalHistory?.pastIllnesses || [],
-      ongoingConditions: user?.medicalHistory?.ongoingConditions || [],
-      allergies: user?.medicalHistory?.allergies || [],
-      currentMedications: user?.medicalHistory?.currentMedications || [],
+      pastIllnesses: [],
+      ongoingConditions: [],
+      allergies: [],
+      currentMedications: [],
     },
-    bodyMeasurements: {
-      height: user?.bodyMeasurements?.height || "",
-      weight: user?.bodyMeasurements?.weight || "",
-      bmi: user?.bodyMeasurements?.bmi || "",
-    },
+    bodyMeasurements: { height: "", weight: "", bmi: "" },
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        name: user.name || "",
+        age: user.age || "",
+        gender: user.gender || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        emergencyContact: {
+          name: user.emergencyContact?.name || "",
+          phone: user.emergencyContact?.phone || "",
+          relationship: user.emergencyContact?.relationship || "",
+        },
+        medicalHistory: {
+          pastIllnesses: user.medicalHistory?.pastIllnesses || [],
+          ongoingConditions: user.medicalHistory?.ongoingConditions || [],
+          allergies: user.medicalHistory?.allergies || [],
+          currentMedications: user.medicalHistory?.currentMedications || [],
+        },
+        bodyMeasurements: {
+          height: user.bodyMeasurements?.height || "",
+          weight: user.bodyMeasurements?.weight || "",
+          bmi: user.bodyMeasurements?.bmi || "",
+        },
+      });
+    }
+  }, [user]);
 
   const [weeklyLog, setWeeklyLog] = useState({
     weight: "70",
@@ -126,16 +146,27 @@ export const ProfilePage: React.FC = () => {
   const completionPercentage = calculateCompletionPercentage();
 
   const handleSave = async () => {
-    const response = await fetch("/auth/profileupdate", {
-      credentials: "include",
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(profileData),
-    });
-    const data = await response.json();
-    alert(data.message);
-    setIsEditing(false);
-    // Here you would save to backend
+    try {
+      const response = await fetch("/auth/profileupdate", {
+        credentials: "include",
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(profileData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update profile.");
+      }
+
+      updateUser(result.data);
+      alert(result.message);
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error("Save failed:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const handleFileUpload = () => {
@@ -195,7 +226,6 @@ export const ProfilePage: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Profile Completion Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -226,7 +256,6 @@ export const ProfilePage: React.FC = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -279,7 +308,6 @@ export const ProfilePage: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Main Content */}
           <div className="lg:col-span-3">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -308,7 +336,6 @@ export const ProfilePage: React.FC = () => {
                 )}
               </div>
 
-              {/* Basic Info Tab */}
               {activeTab === "basic" && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -458,7 +485,6 @@ export const ProfilePage: React.FC = () => {
                 </div>
               )}
 
-              {/* Medical History Tab */}
               {activeTab === "medical" && (
                 <div className="space-y-8">
                   {Object.entries(profileData.medicalHistory).map(
@@ -530,7 +556,6 @@ export const ProfilePage: React.FC = () => {
                 </div>
               )}
 
-              {/* Body Measurements Tab */}
               {activeTab === "measurements" && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -606,14 +631,15 @@ export const ProfilePage: React.FC = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                       <div className="text-blue-700">Underweight: &lt;18.5</div>
                       <div className="text-green-700">Normal: 18.5-24.9</div>
-                      <div className="text-yellow-700">Overweight: 25-29.9</div>
+                      <div className="text-yellow-700">
+                        Overweight: 25-29.9
+                      </div>
                       <div className="text-red-700">Obese: ≥30</div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Documents Tab */}
               {activeTab === "documents" && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
@@ -669,7 +695,6 @@ export const ProfilePage: React.FC = () => {
                 </div>
               )}
 
-              {/* Weekly Tracker Tab */}
               {activeTab === "tracker" && (
                 <div className="space-y-8">
                   <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">

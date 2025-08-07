@@ -27,6 +27,29 @@ export interface User {
   gender?: string;
   role?: string;
 }
+export interface ProfileData {
+  name: string;
+  age: string;
+  gender: string;
+  phone: string;
+  email: string;
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  medicalHistory: {
+    pastIllnesses: string[];
+    ongoingConditions: string[];
+    allergies: string[];
+    currentMedications: string[];
+  };
+  bodyMeasurements: {
+    height: string;
+    weight: string;
+    bmi: string;
+  };
+}
 
 export interface UserQuery{
   role: string | null,
