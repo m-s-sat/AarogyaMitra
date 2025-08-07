@@ -23,7 +23,6 @@ export const LoginPage: React.FC = () => {
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const handleGoogleRedirect = () => {
-    // BACKEND: Replace localhost URL with production OAuth endpoint
     window.location.href = '/auth/google';
   };
 
@@ -32,9 +31,8 @@ export const LoginPage: React.FC = () => {
       alert("Please enter your email.");
       return;
     }
-    setIsSendLoading(true);
-    // BACKEND: Hook to password reset API
-    const response = await fetch('/auth/reset-request', {
+    setIsSendLoading(true)
+    const response = await fetch('/auth/reset-request',{
       method: "POST",
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ email: email }),

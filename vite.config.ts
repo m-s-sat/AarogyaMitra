@@ -7,14 +7,14 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  server: {
-    proxy: {
-      '/auth': {
+  server:{
+    proxy:{
+      '/auth':{
         target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },
-      '/auth/*': {
+      '/auth/*':{
         target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false

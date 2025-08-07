@@ -6,7 +6,25 @@ export interface User {
   avatar?: string;
   password?:string;
   dob?:string,
-  pincode?:Number
+  pincode?:Number,
+  emergencyContact?: {
+    name?: string;
+    phone?: string;
+    relationship?: string;
+  };
+  medicalHistory?: {
+    pastIllnesses?: string[];
+    ongoingConditions?: string[];
+    allergies?: string[];
+    currentMedications?: string[];
+  };
+  bodyMeasurements?: {
+    height?: string;
+    weight?: string;
+    bmi?: string;
+  };
+  age?: string;
+  gender?: string;
 }
 
 export interface UserQuery{
