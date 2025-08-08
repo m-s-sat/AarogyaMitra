@@ -115,3 +115,33 @@ export interface Language {
   nativeName: string;
   flag: string;
 }
+
+export interface Hospital {
+  role: string;
+  hospital?: {
+    id?: string;
+    name?: string;
+    address?: string;
+    govId?: string;
+    type?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+    state?: string;
+    district?: string;
+  };
+  admin?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    password?: string;
+  };
+  departments?: string[];
+  emergency_contact?: string;
+  visiting_hours?: {
+    start?: string;
+    end?: string;
+  };
+}
+

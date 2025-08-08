@@ -16,6 +16,8 @@ import {
   ArrowLeft,
   Search
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Hospital } from '../types';
 interface SelectOption {
   value: string;
   label: string;
@@ -127,7 +129,7 @@ const departments = [
 
 export const HospitalSignupPage: React.FC = () => {
   const navigate = useNavigate();
-  
+  const {hospitalsignup} = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedState, setSelectedState] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -180,7 +182,7 @@ export const HospitalSignupPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const payload = {
+    const payload: Hospital = {
       role: 'hospital',
       hospital: {
         id: selectedHospital.id,
@@ -199,14 +201,18 @@ export const HospitalSignupPage: React.FC = () => {
         password: formData.password
       },
       departments: formData.departments,
-      emergencyContact: formData.emergencyContact,
-      visitingHours: formData.visitingHours
+      emergency_contact: formData.emergencyContact,
+      visiting_hours: {
+        start: formData.visitingHours.start,
+        end: formData.visitingHours.end
+      }
     };
 
     console.log('Hospital signup payload:', payload);
 
     // Simulate API call
     setTimeout(() => {
+      hospitalsignup(payload);
       setIsLoading(false);
       navigate('/login');
     }, 2000);

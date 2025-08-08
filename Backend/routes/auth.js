@@ -1,12 +1,13 @@
 const express = require('express');
-const { createUser, getUser, loginUser, logout, setForgotPassToken, forgotpass, updateProfile } = require('../control/auth');
+const { createUser, getUser, loginUser, logout, setForgotPassToken, forgotpass, updateProfile, createHospital } = require('../control/auth');
 const router = express.Router();
 const passport = require('passport');
 const { isAuth } = require('../common/common');
 
 router
     .post('/login',passport.authenticate('local'),loginUser)
-    .post('/register',createUser).get('/getuser',getUser)
+    .post('/register',createUser)
+    .get('/getuser',getUser)
     .get('/logout',logout)
     .get('/google',passport.authenticate('google',{
         scope: ["profile", "email"]
@@ -17,6 +18,7 @@ router
     })
     .post('/reset-request',setForgotPassToken)
     .post('/password-reset',forgotpass)
-    .patch('/profileupdate', isAuth ,updateProfile);
+    .patch('/profileupdate', isAuth ,updateProfile)
+    .post('/hospitalreg', createHospital);
 
-exports.router = router
+exports.router = router;

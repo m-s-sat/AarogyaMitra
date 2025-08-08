@@ -10,7 +10,8 @@ const googleStrategy = require('passport-google-oauth2').Strategy;
 const bcrypt = require('bcrypt');
 const { isAuth } = require('./common/common');
 const server = express();
-const cors = require('cors')
+const cors = require('cors');
+const HospitalReg = require('./model/hospitalreg');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -41,12 +42,33 @@ passport.use("local", new localStrategy(async function verify(username, password
                 { phone: username }
             ]
         });
-        if(!user) return done(null, false, {message:"Invalid Username or Password"});
-        bcrypt.compare(password, user.password, (err, result)=>{
+        if(user){
+            bcrypt.compare(password, user.password, (err, result)=>{
             if(err) return done(err, false);
             if(!result) return done(null, false, {message:"Invalid username or password"});
             return done(null, user)
-        });
+            });
+        }
+        else{
+            const hospital = await HospitalReg.findOne({
+                $or: [
+                    { "admin.email": username },
+                    { "admin.phone": username }
+                ],
+            });
+            if (!hospital) {
+                return done(null, false, { message: "Invalid Username or Password" });
+            }
+            bcrypt.compare(password, hospital.admin.password, (err, result) => {
+                if (err) {
+                    return done(err);
+                }
+                if (!result) {
+                    return done(null, false, { message: "Invalid Username or Password" });
+                }
+                return done(null, hospital);
+            });
+        }
     }
     catch(err){
         return done(err, false, {message:"Internal server error"});

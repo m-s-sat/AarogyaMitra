@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { User, UserQuery } from "../types";
+import { Hospital, User, UserQuery } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -15,6 +15,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   updateUser: (userData: Partial<User>) => void;
+  hospitalsignup: (hopitalData: Hospital) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,7 +56,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     fetchUser();
   }, []);
-
+  const hospitalsignup = async (hospitalData: Hospital) => {
+    console.log("Hospital data in auth context", hospitalData);
+    const response = await fetch("/auth/hospitalreg", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(hospitalData),
+    });
+    if (!response.ok) throw new Error("Unauthorized");
+    const data = await response.json();
+    setUser(data.data);
+  }
   const login = async (userData: UserQuery) => {
     const main = {
       username: userData.email,
@@ -125,6 +137,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     isAuthenticated: !!user,
     updateUser,
+    hospitalsignup,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

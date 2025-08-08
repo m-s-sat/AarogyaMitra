@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const { sendMail } = require('../common/common');
 const path = require('path');
+const HospitalReg = require('../model/hospitalreg');
 
 const emailTemplate = fs.readFileSync(path.join(__dirname,'../template/emailTemplate.html'), 'utf-8');
 
@@ -25,6 +26,27 @@ exports.createUser = async(req, res)=>{
     }
     catch(err){
         res.status(500).json(err);
+    }
+}
+exports.createHospital = async(req,res)=>{
+
+    try{
+        const hospital_data = req.body;
+        bcrypt.hash(hospital_data.admin.password, parseInt(process.env.SALT), async(err,hashedPassword)=>{
+            if(err) return res.status(500).json({message:"Error in hashing password"});
+            const data = new HospitalReg({...hospital_data, admin: {...hospital_data.admin, password: hashedPassword}});
+            await data.save();
+            req.login(data, (err)=>{
+                if(err) return res.status(401).json({message:"Unable to login"});
+                return res.status(201).json({
+                    message: "Hospital registered successfully",
+                    data: data
+                });
+            });
+        });
+    }
+    catch(err){
+        return res.status(500).json({message:"Internal server error"});
     }
 }
 exports.loginUser = (req,res)=>{
