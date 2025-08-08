@@ -66,8 +66,8 @@ export const SignupPage: React.FC = () => {
       };
       console.log(newUser)
       signup(newUser);
-      if(newUser.role === 'patient') navigate('/dashboard');
-      else if(newUser.role === 'hospital') navigate('/hospital/dashboard');
+      if(selectedRole === 'patient') navigate('/dashboard');
+      else if(selectedRole === 'hospital') navigate('/hospital/dashboard');
       // else navigate('/doctor/dashboard');
       setIsLoading(false);
     }, 1500);
