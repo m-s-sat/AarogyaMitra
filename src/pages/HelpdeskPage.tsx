@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import { 
   HelpCircle, 
   Plus, 
@@ -584,7 +585,7 @@ export const HelpdeskPage: React.FC = () => {
                     type="text"
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendChatMessage()}
                     placeholder="Type your message..."
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />

@@ -6,7 +6,7 @@ import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
-import { HospitalSignupPage } from './pages/HospitalSignupPage';
+import { HospitalSignupPage } from './pages/HospitalSignUpPage.tsx';
 import { Dashboard } from './pages/Dashboard';
 import { AppointmentsPage } from './pages/AppointmentsPage';
 import { ChatPage } from './pages/ChatPage';

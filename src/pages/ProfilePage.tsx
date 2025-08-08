@@ -46,10 +46,10 @@ export const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
-  
+
   console.log(user?.age);
   const [activeTab, setActiveTab] = useState<
-  "basic" | "medical" | "measurements" | "documents" | "tracker"
+    "basic" | "medical" | "measurements" | "documents" | "tracker"
   >("basic");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -221,9 +221,8 @@ export const ProfilePage: React.FC = () => {
           <p className="text-gray-600 text-sm">
             {completionPercentage === 100
               ? "🎉 Your profile is complete and up to date!"
-              : `Complete your profile to get personalized health insights. ${
-                  8 - Math.round(completionPercentage / 12.5)
-                } fields remaining.`}
+              : `Complete your profile to get personalized health insights. ${8 - Math.round(completionPercentage / 12.5)
+              } fields remaining.`}
           </p>
         </motion.div>
 
@@ -267,11 +266,10 @@ export const ProfilePage: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
-                      activeTab === tab.id
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${activeTab === tab.id
                         ? "bg-blue-50 text-blue-600 border border-blue-200"
                         : "text-gray-700 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     <tab.icon className="w-5 h-5" />
                     <span className="font-medium">{tab.label}</span>
@@ -640,13 +638,12 @@ export const ProfilePage: React.FC = () => {
                         <div className="flex items-start justify-between mb-3">
                           <FileText className="w-8 h-8 text-blue-600" />
                           <span
-                            className={`px-2 py-1 text-xs rounded-full ${
-                              doc.type === "report"
+                            className={`px-2 py-1 text-xs rounded-full ${doc.type === "report"
                                 ? "bg-blue-100 text-blue-600"
                                 : doc.type === "prescription"
-                                ? "bg-green-100 text-green-600"
-                                : "bg-purple-100 text-purple-600"
-                            }`}
+                                  ? "bg-green-100 text-green-600"
+                                  : "bg-purple-100 text-purple-600"
+                              }`}
                           >
                             {doc.type}
                           </span>
@@ -723,7 +720,7 @@ export const ProfilePage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Blood Pressure
                       </label>
-                      <div className="flex space-x-2">
+                      <div className="flex items-center space-x-2">
                         <input
                           type="number"
                           placeholder="Systolic"
@@ -737,11 +734,9 @@ export const ProfilePage: React.FC = () => {
                               },
                             }))
                           }
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 min-w-[80px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
-                        <span className="flex items-center text-gray-500">
-                          /
-                        </span>
+                        <span className="flex items-center text-gray-400 text-lg font-semibold">/</span>
                         <input
                           type="number"
                           placeholder="Diastolic"
@@ -755,10 +750,11 @@ export const ProfilePage: React.FC = () => {
                               },
                             }))
                           }
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 min-w-[80px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                     </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Resting Heart Rate (bpm)
