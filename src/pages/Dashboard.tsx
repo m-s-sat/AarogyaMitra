@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -28,25 +28,25 @@ export const Dashboard: React.FC = () => {
   // Mock profile data for calculation. This is required for the Profile Completion section.
   const mockProfileData = {
     name: user?.name || 'John Doe',
-    age: '30',
-    gender: 'male',
+    age: user?.age || '30',
+    gender: user?.gender || 'male',
     phone: user?.phone || '1234567890',
     email: user?.email || 'john.doe@example.com',
     emergencyContact: {
-      name: 'Jane Doe',
-      phone: '0987654321',
-      relationship: 'Spouse'
+      name: user?.emergencyContact?.name || 'Jane Doe',
+      phone: user?.emergencyContact?.phone || '0987654321',
+      relationship: user?.emergencyContact?.relationship || 'Spouse'
     },
     medicalHistory: {
-      pastIllnesses: ['Flu (2023)'],
-      ongoingConditions: ['Hypertension'],
-      allergies: ['Peanuts'],
-      currentMedications: ['Lisinopril 10mg']
+      pastIllnesses: user?.medicalHistory?.pastIllnesses || ['Flu (2023)'],
+      ongoingConditions: user?.medicalHistory?.ongoingConditions || ['Hypertension'],
+      allergies: user?.medicalHistory?.allergies || ['Peanuts'],
+      currentMedications: user?.medicalHistory?.currentMedications || ['Lisinopril 10mg']
     },
     bodyMeasurements: {
-      height: '175',
-      weight: '70',
-      bmi: '22.9'
+      height: user?.bodyMeasurements?.height || '175',
+      weight: user?.bodyMeasurements?.weight || '70',
+      bmi: user?.bodyMeasurements?.bmi || '22.9'
     }
   };
 
