@@ -54,9 +54,9 @@ export const LoginPage: React.FC = () => {
         password: credentials.password
       };
       login(loginUser);
-
+      console.log("Login User:", loginUser);
       // Redirect based on role
-      if (selectedRole === 'hospital') {
+      if (loginUser.role === 'hospital') {
         navigate('/hospital/dashboard'); // BACKEND: change if needed
       } else {
         navigate('/dashboard');

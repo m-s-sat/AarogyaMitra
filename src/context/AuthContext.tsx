@@ -16,6 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   updateUser: (userData: Partial<User>) => void;
   hospitalsignup: (hopitalData: Hospital) => Promise<void>;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,30 +35,32 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkUserStatus = async () => {
       try {
-        const response = await fetch("/auth/getuser", {
+        const response = await fetch("auth/check", {
           credentials: "include",
         });
-        if (!response.ok) {
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
           setUser(null);
-          return;
         }
-        const data = await response.json();
-        if (data && data.id) {
-          setUser(data);
-        }
-      } catch {
+      } catch (error) {
+        console.error("Could not fetch user status:", error);
         setUser(null);
+      } finally {
+        setIsLoading(false); // We are done loading, whether successful or not
       }
     };
 
-    fetchUser();
+    checkUserStatus();
   }, []);
   const hospitalsignup = async (hospitalData: Hospital) => {
-    console.log("Hospital data in auth context", hospitalData);
     const response = await fetch("/auth/hospitalreg", {
       method: "POST",
       credentials: "include",
@@ -66,22 +69,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
     if (!response.ok) throw new Error("Unauthorized");
     const data = await response.json();
-    setUser(data.data);
+    setHospital(data.data);
   }
   const login = async (userData: UserQuery) => {
-    const main = {
-      username: userData.email,
-      password: userData.password,
-      role: userData.role,
-    };
-    const response = await fetch("/auth/login", {
+    const response = await fetch("auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(main),
+      body: JSON.stringify({
+        username: userData.email,
+        password: userData.password,
+      }),
     });
     if (!response.ok) {
-      alert("Unauthorized! Please login again with proper credentials");
+      alert("Unauthorized! Please check your credentials.");
       throw new Error("Unauthorized");
     }
     const data = await response.json();
@@ -123,10 +124,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   };
 
-  const updateUser = (newUserData: Partial<User>) => {
+  const updateUser = async (newUserData: Partial<User>) => {
     if (user) {
-      const updatedUser = { ...user, ...newUserData };
-      setUser(updatedUser);
+      const response = await fetch('/auth/profileupdate',{
+        credentials: 'include',
+        method: 'PATCH',
+        headers: {'content-type':'application/json'},
+        body: JSON.stringify(newUserData),
+      })
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Error updating user:", data.message);
+        return;
+      }
+      setUser(data.data);
+      alert(data.message);
     }
   };
 
@@ -136,6 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signup,
     logout,
     isAuthenticated: !!user,
+    isLoading,
     updateUser,
     hospitalsignup,
   };

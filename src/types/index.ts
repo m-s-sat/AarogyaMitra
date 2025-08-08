@@ -6,7 +6,7 @@ export interface User {
   avatar?: string;
   password?:string;
   dob?:string,
-  pincode?:Number,
+  pincode?:number,
   emergencyContact?: {
     name?: string;
     phone?: string;
@@ -26,6 +26,26 @@ export interface User {
   age?: string;
   gender?: string;
   role?: string;
+  weeklyLogs?: {
+    weight?: string;
+    waistCircumference?: string;
+    sleepHours?: string;
+    restingHeartRate?: string;
+    bloodPressure?: {
+      systolic?: string,
+      diastolic?: string
+    }
+    waterIntake?: string,
+    energyLevel?: string,
+    appetiteChanges?: string,
+    symptoms?: string[],
+    exerciseFrequency?: string,
+    conditionSpecific?: {
+      bloodSugar?: string;
+      painScore?: string;
+    }
+    lastUpdated?: Date;
+  }
 }
 export interface ProfileData {
   name: string;

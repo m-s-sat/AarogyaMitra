@@ -17,6 +17,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import TimeAgo from "../components/Timeago";
 
 interface ProfileData {
   name: string;
@@ -43,7 +44,7 @@ interface ProfileData {
 }
 
 export const ProfilePage: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, isLoading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<
     "basic" | "medical" | "measurements" | "documents" | "tracker"
@@ -95,22 +96,23 @@ export const ProfilePage: React.FC = () => {
   }, [user]);
 
   const [weeklyLog, setWeeklyLog] = useState({
-    weight: "70",
-    waistCircumference: "32",
-    bloodPressure: { systolic: "120", diastolic: "80" },
-    restingHeartRate: "72",
-    sleepHours: "7.5",
-    waterIntake: "8",
-    energyLevel: "medium" as const,
-    appetiteChanges: "normal" as const,
-    symptoms: [] as string[],
-    exerciseFrequency: "3",
+    weight: user?.weeklyLogs?.weight || "",
+    waistCircumference: user?.weeklyLogs?.waistCircumference || "",
+    bloodPressure: { systolic: user?.weeklyLogs?.bloodPressure?.systolic || "", diastolic: user?.weeklyLogs?.bloodPressure?.diastolic || "" },
+    restingHeartRate: user?.weeklyLogs?.restingHeartRate || "",
+    sleepHours: user?.weeklyLogs?.sleepHours || "",
+    waterIntake: user?.weeklyLogs?.waterIntake || "",
+    energyLevel: user?.weeklyLogs?.energyLevel || "",
+    appetiteChanges: user?.weeklyLogs?.appetiteChanges || "",
+    symptoms: user?.weeklyLogs?.symptoms || [],
+    exerciseFrequency: user?.weeklyLogs?.exerciseFrequency || "",
     conditionSpecific: {
-      bloodSugar: "95",
-      painScore: "2",
+      bloodSugar: user?.weeklyLogs?.conditionSpecific?.bloodSugar || "",
+      painScore: user?.weeklyLogs?.conditionSpecific?.painScore || "",
     },
+    lastUpdated: user?.weeklyLogs?.lastUpdated || new Date(),
   });
-
+    
   const [documents] = useState([
     {
       id: "1",
@@ -208,6 +210,10 @@ export const ProfilePage: React.FC = () => {
     { id: "documents", label: "Documents", icon: FileText },
     { id: "tracker", label: "Weekly Tracker", icon: Activity },
   ];
+  const handleWeeklySave = ()=>{
+    console.log(weeklyLog);
+    updateUser({weeklyLogs: weeklyLog});
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
@@ -705,7 +711,7 @@ export const ProfilePage: React.FC = () => {
                       </h4>
                     </div>
                     <p className="text-emerald-700 text-sm">
-                      Last updated: 2 days ago
+                      Last updated: <TimeAgo timestamp={String(user?.weeklyLogs?.lastUpdated)}></TimeAgo>
                     </p>
                   </div>
 
@@ -916,7 +922,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700 transition-all">
+                  <button onClick={handleWeeklySave} className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700 transition-all">
                     Save Weekly Log
                   </button>
                 </div>

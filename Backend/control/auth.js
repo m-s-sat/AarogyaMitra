@@ -7,8 +7,13 @@ const fs = require('fs');
 const { sendMail } = require('../common/common');
 const path = require('path');
 const HospitalReg = require('../model/hospitalreg');
+const cron = require('node-cron');
 
 const emailTemplate = fs.readFileSync(path.join(__dirname,'../template/emailTemplate.html'), 'utf-8');
+const welcomeEmailTemplate = fs.readFileSync(
+    path.join(__dirname, '../template/welcomeEmail.html'), 
+    'utf-8'
+);
 
 exports.createUser = async(req, res)=>{
     try{
@@ -18,6 +23,18 @@ exports.createUser = async(req, res)=>{
             if(err) return res.status(500).json('facing problem in hashing passsword');
             const user = new User({username, name, password:hashedPassword, phone, preferredLanguage, avatar, dob, pincode, role});
             await user.save();
+            const appName = 'Medimitra';
+            const profileLink = 'http://localhost:5173/profile';
+            const currentYear = new Date().getFullYear();
+            let htmlToSend = welcomeEmailTemplate
+                .replace(/{{APP_NAME}}/g, appName)
+                .replace(/{{NAME}}/g, name)
+                .replace(/{{CALL_TO_ACTION_LINK}}/g, profileLink)
+                .replace(/{{CURRENT_YEAR}}/g, currentYear);
+            const subject = `Welcome to ${appName}, ${name}!`;
+            sendMail({ to: username, subject, html: htmlToSend }).catch(error => {
+                console.error(`Failed to send welcome email to ${username}:`, error);
+            });
             req.login(user, (err)=>{
                 if(err) res.status(401);
                 res.json(user);
@@ -29,7 +46,6 @@ exports.createUser = async(req, res)=>{
     }
 }
 exports.createHospital = async(req,res)=>{
-
     try{
         const hospital_data = req.body;
         bcrypt.hash(hospital_data.admin.password, parseInt(process.env.SALT), async(err,hashedPassword)=>{
@@ -50,16 +66,11 @@ exports.createHospital = async(req,res)=>{
     }
 }
 exports.loginUser = (req,res)=>{
-    if(req.user){
-        if(req.user.role!==req.body.role) return res.status(401).json('unauthorized');
-        return res.status(200).json(req.user);
-    }
-    res.status(401).json('unauthorized')
+    res.status(200).json(req.user);
 }
-exports.getUser = (req, res)=>{
-    if(req.user) return res.status(201).json(req.user);
-    res.status(401).json("unauthorized");
-}
+exports.checkAuthStatus = (req, res) => {
+    res.status(200).json(req.user);
+};
 exports.logout = (req,res,next)=>{
     req.logout((err)=>{
         if(err) return next(err);
@@ -116,22 +127,20 @@ exports.setForgotPassToken = async(req,res)=>{
 exports.updateProfile = async(req,res)=>{
     try{
         const {id} = req.user;
-        const updateProfile = req.body;
-        console.log(updateProfile);
-        if(!updateProfile) return res.status(400).json({message:'Unable to fetch your data'});
-        const user = await User.findOneAndUpdate({_id:id},updateProfile,{new:true});
+        const updateData = req.body;
+        if(!updateData) return res.status(400).json({message:'Unable to fetch your data'});
+        if (updateData.weeklyLogs) {
+            updateData.weeklyLogs.lastUpdated = new Date();
+            updateData.weeklyLogs.weeklyReminderSent = false;
+        }
+        const user = await User.findOneAndUpdate({_id:id},updateData,{new:true});
         if(!user) return res.status(500).json({message:'Unable to fetch your data in our database.'});
-        await new Promise((resolve, reject) => {
         req.login(user, (err) => {
             if (err) {
-                reject(err);
+                console.error("Login Error:", err);
+                return res.status(500).json({ message: "An error occurred while logging in." });
             }
-                resolve();
-            });
-        });
-        return res.status(200).json({
-            data: user,
-            message: "Your profile has been updated",
+            res.status(200).json({ message: "Profile updated successfully.", data: user });
         });
     }
     catch(err){

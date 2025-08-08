@@ -12,6 +12,7 @@ import { AppointmentsPage } from './pages/AppointmentsPage';
 import { ChatPage } from './pages/ChatPage';
 import { EmergencyPage } from './pages/EmergencyPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { HospitalDashboard } from './pages/HospitalDashboard.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -104,6 +105,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/hospital/dashboard" 
+            element={
+              <ProtectedRoute>
+                <HospitalDashboard />
               </ProtectedRoute>
             } 
           />
