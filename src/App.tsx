@@ -24,8 +24,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Public Route Component (redirect to dashboard if authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" />;
+  const { isAuthenticated, user } = useAuth();
+  if(!isAuthenticated) return <>{children}</>;
+  if(user?.role === 'hospital') {
+    return <Navigate to="/hospital/dashboard" />;
+  }
+  return <Navigate to="/dashboard" />;
 };
 
 function AppContent() {
@@ -77,6 +81,14 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
+          <Route
+            path='/hospital/dashboard'
+            element={
+              <ProtectedRoute>
+                <HospitalDashboard />
+              </ProtectedRoute>
+            }
+          ></Route>
           <Route 
             path="/appointments" 
             element={

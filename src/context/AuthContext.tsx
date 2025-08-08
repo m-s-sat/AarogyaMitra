@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
     if (!response.ok) throw new Error("Unauthorized");
     const data = await response.json();
-    setHospital(data.data);
+    setUser(data.data);
   }
   const login = async (userData: UserQuery) => {
     const response = await fetch("auth/login", {
