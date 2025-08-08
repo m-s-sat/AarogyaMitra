@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Welcome to {{APP_NAME}}</title>
+    <style>
+        /* Basic Reset */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                margin: auto !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0 !important; padding: 0 !important; background-color: #f4f7f6;">
+    <!-- Visually Hidden Preheader Text -->
+    <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
+        We're thrilled to have you on board! Get started by setting up your profile.
+    </div>
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="background-color: #f4f7f6;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" class="email-container">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px 0; text-align: center;">
+                           <!-- You can replace this text with your logo image -->
+                           <h1 style="margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 28px; font-weight: bold; color: #0056b3;">{{APP_NAME}}</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Main Body -->
+                    <tr>
+                        <td style="background-color: #ffffff; border-radius: 8px; padding: 40px; text-align: left;">
+                            <h2 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #333333; margin-top: 0; margin-bottom: 20px;">
+                                Welcome, {{NAME}}!
+                            </h2>
+                            <p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #555555; margin-bottom: 20px;">
+                                We're thrilled to have you on board. {{APP_NAME}} is your personal health companion, designed to help you manage your wellness journey with ease.
+                            </p>
+                            <p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #555555; margin-bottom: 30px;">
+                                To get the most out of our platform, we recommend completing your profile. This will allow us to provide you with more personalized insights and services.
+                            </p>
+
+                            <!-- Call to Action Button -->
+                            <table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto;">
+                                <tr>
+                                    <td align="center" style="border-radius: 5px; background-color: #007bff;">
+                                        <a href="{{CALL_TO_ACTION_LINK}}" target="_blank" style="font-size: 16px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 5px; padding: 15px 25px; border: 1px solid #007bff; display: inline-block; font-weight: bold;">
+                                            Complete Your Profile
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #555555; margin-top: 30px;">
+                                If you have any questions, feel free to contact our support team.
+                            </p>
+                            <p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #555555; margin-top: 20px;">
+                                Cheers,<br>
+                                The {{APP_NAME}} Team
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; color: #888888;">
+                            <p style="margin: 0;">You received this email because you just signed up for an account on {{APP_NAME}}.</p>
+                            <p style="margin: 10px 0 0 0;">&copy; {{CURRENT_YEAR}} {{APP_NAME}}. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

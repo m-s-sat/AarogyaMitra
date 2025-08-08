@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -25,7 +25,6 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
-
   // Mock profile data for calculation. This is required for the Profile Completion section.
   const mockProfileData = {
     name: user?.name || 'John Doe',

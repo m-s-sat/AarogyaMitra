@@ -110,6 +110,14 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/hospital/dashboard" 
+            element={
+              <ProtectedRoute>
+                <HospitalDashboard />
+              </ProtectedRoute>
+            } 
+          />
 
           <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
 

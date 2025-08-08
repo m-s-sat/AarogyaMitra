@@ -6,7 +6,7 @@ export interface User {
   avatar?: string;
   password?:string;
   dob?:string,
-  pincode?:Number,
+  pincode?:number,
   emergencyContact?: {
     name?: string;
     phone?: string;
@@ -26,6 +26,49 @@ export interface User {
   age?: string;
   gender?: string;
   role?: string;
+  weeklyLogs?: {
+    weight?: string;
+    waistCircumference?: string;
+    sleepHours?: string;
+    restingHeartRate?: string;
+    bloodPressure?: {
+      systolic?: string,
+      diastolic?: string
+    }
+    waterIntake?: string,
+    energyLevel?: string,
+    appetiteChanges?: string,
+    symptoms?: string[],
+    exerciseFrequency?: string,
+    conditionSpecific?: {
+      bloodSugar?: string;
+      painScore?: string;
+    }
+    lastUpdated?: Date;
+  }
+}
+export interface ProfileData {
+  name: string;
+  age: string;
+  gender: string;
+  phone: string;
+  email: string;
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  medicalHistory: {
+    pastIllnesses: string[];
+    ongoingConditions: string[];
+    allergies: string[];
+    currentMedications: string[];
+  };
+  bodyMeasurements: {
+    height: string;
+    weight: string;
+    bmi: string;
+  };
 }
 
 export interface UserQuery{
@@ -92,3 +135,33 @@ export interface Language {
   nativeName: string;
   flag: string;
 }
+
+export interface Hospital {
+  role: string;
+  hospital?: {
+    id?: string;
+    name?: string;
+    address?: string;
+    govId?: string;
+    type?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+    state?: string;
+    district?: string;
+  };
+  admin?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    password?: string;
+  };
+  departments?: string[];
+  emergency_contact?: string;
+  visiting_hours?: {
+    start?: string;
+    end?: string;
+  };
+}
+

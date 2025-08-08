@@ -1,7 +1,12 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, UserQuery } from '../types';
-import { redirect } from 'react-router-dom';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Hospital, User, UserQuery } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +15,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   updateUser: (userData: Partial<User>) => void;
+  hospitalsignup: (hopitalData: Hospital) => Promise<void>;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,7 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -28,56 +35,58 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Sync from backend on mount
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkUserStatus = async () => {
       try {
-        const response = await fetch('/auth/getuser', {
-          credentials: 'include',
+        const response = await fetch("auth/check", {
+          credentials: "include",
         });
-        if (!response.ok) {
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
           setUser(null);
-          localStorage.removeItem('healthcare_user');
-          localStorage.removeItem('userId');
-          return;
         }
-        const data = await response.json();
-        if (data && data.id) {
-          setUser(data);
-          localStorage.setItem('healthcare_user', JSON.stringify(data));
-          localStorage.setItem('userId', data.id);
-        }
-      } catch {
+      } catch (error) {
+        console.error("Could not fetch user status:", error);
         setUser(null);
+      } finally {
+        setIsLoading(false); // We are done loading, whether successful or not
       }
     };
 
-    // Try localStorage first for faster UI load
-    const storedUser = localStorage.getItem('healthcare_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
-    fetchUser();
+    checkUserStatus();
   }, []);
-
-  const login = async (userData: UserQuery) => {
-    const main = { username: userData.email, password: userData.password, role: userData.role };
-    const response = await fetch('/auth/login', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(main),
+  const hospitalsignup = async (hospitalData: Hospital) => {
+    const response = await fetch("/auth/hospitalreg", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(hospitalData),
     });
-    if (!response.ok){
-      alert('Unauthorized! Please login again with proper credentials');
-      throw new Error('Unauthorized');
+    if (!response.ok) throw new Error("Unauthorized");
+    const data = await response.json();
+    setHospital(data.data);
+  }
+  const login = async (userData: UserQuery) => {
+    const response = await fetch("auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        username: userData.email,
+        password: userData.password,
+      }),
+    });
+    if (!response.ok) {
+      alert("Unauthorized! Please check your credentials.");
+      throw new Error("Unauthorized");
     }
     const data = await response.json();
     setUser(data);
-    localStorage.setItem('healthcare_user', JSON.stringify(data));
-    localStorage.setItem('userId', data.id);
   };
 
   const signup = async (userData: User) => {
@@ -91,39 +100,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       avatar: userData.avatar,
       dob: userData.dob,
       pincode: userData.pincode,
-      role: userData.role
+      role: userData.role,
     };
-    const response = await fetch('/auth/register', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'content-type': 'application/json' },
+    const response = await fetch("/auth/register", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(main),
     });
-    if (!response.ok) throw new Error('Unauthorized');
+    if (!response.ok) throw new Error("Unauthorized");
 
     const data = await response.json();
     setUser(data);
-    localStorage.setItem('healthcare_user', JSON.stringify(data));
-    localStorage.setItem('userId', data.id);
   };
 
   const logout = async () => {
-    const response = await fetch('/auth/logout', {
-      credentials: 'include',
+    const response = await fetch("/auth/logout", {
+      credentials: "include",
     });
-    if (!response.ok) throw new Error('Unable to logout the user');
+    if (!response.ok) throw new Error("Unable to logout the user");
 
     await response.json();
     setUser(null);
-    localStorage.removeItem('healthcare_user');
-    localStorage.removeItem('userId');
   };
 
-  const updateUser = (userData: Partial<User>) => {
+  const updateUser = async (newUserData: Partial<User>) => {
     if (user) {
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem('healthcare_user', JSON.stringify(updatedUser));
+      const response = await fetch('/auth/profileupdate',{
+        credentials: 'include',
+        method: 'PATCH',
+        headers: {'content-type':'application/json'},
+        body: JSON.stringify(newUserData),
+      })
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Error updating user:", data.message);
+        return;
+      }
+      setUser(data.data);
+      alert(data.message);
     }
   };
 
@@ -133,8 +148,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signup,
     logout,
     isAuthenticated: !!user,
+    isLoading,
     updateUser,
-    
+    hospitalsignup,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
