@@ -111,14 +111,8 @@ function AppContent() {
             } 
           />
 
-          <Route 
-            path="/hospital/dashboard" 
-            element={
-              <ProtectedRoute>
-                <HospitalDashboard />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
+
 
           {/* Placeholder routes for other pages */}
           <Route 
