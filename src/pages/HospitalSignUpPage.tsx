@@ -208,7 +208,7 @@ export const HospitalSignupPage: React.FC = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      navigate('/login');
+      navigate('/hospital/dashboard');
     }, 2000);
   };
 

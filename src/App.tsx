@@ -6,12 +6,15 @@ import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
-import { HospitalSignupPage } from './pages/HospitalSignUpPage.tsx';
+import { HospitalSignupPage } from './pages/HospitalSignupPage';
 import { Dashboard } from './pages/Dashboard';
 import { AppointmentsPage } from './pages/AppointmentsPage';
 import { ChatPage } from './pages/ChatPage';
 import { EmergencyPage } from './pages/EmergencyPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { MyMedicinesPage } from './pages/MyMedicinesPage';
+import { HelpdeskPage } from './pages/HelpdeskPage';
+import { HospitalDashboard } from './pages/HospitalDashboard';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -108,6 +111,15 @@ function AppContent() {
             } 
           />
 
+          <Route 
+            path="/hospital/dashboard" 
+            element={
+              <ProtectedRoute>
+                <HospitalDashboard />
+              </ProtectedRoute>
+            } 
+          />
+
           {/* Placeholder routes for other pages */}
           <Route 
             path="/reports" 
@@ -126,12 +138,7 @@ function AppContent() {
             path="/medicines" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-4">Medicines Page</h1>
-                    <p className="text-gray-600">Coming soon - Track your medication schedule</p>
-                  </div>
-                </div>
+                <MyMedicinesPage />
               </ProtectedRoute>
             } 
           />
@@ -152,12 +159,15 @@ function AppContent() {
             path="/helpdesk" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-4">Helpdesk</h1>
-                    <p className="text-gray-600">Coming soon - 24/7 medical assistance</p>
-                  </div>
-                </div>
+                <HelpdeskPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/mymedicines" 
+            element={
+              <ProtectedRoute>
+                <MyMedicinesPage />
               </ProtectedRoute>
             } 
           />

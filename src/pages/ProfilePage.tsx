@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import {
   User,
   Camera,
@@ -17,7 +18,6 @@ import {
   Eye,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
 interface ProfileData {
   name: string;
   age: string;
@@ -45,9 +45,11 @@ interface ProfileData {
 export const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
+  
   console.log(user?.age);
   const [activeTab, setActiveTab] = useState<
-    "basic" | "medical" | "measurements" | "documents" | "tracker"
+  "basic" | "medical" | "measurements" | "documents" | "tracker"
   >("basic");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
