@@ -167,8 +167,6 @@ export const HospitalSignupPage: React.FC = () => {
       emergency_contact: formData.emergencyContact,
       visiting_hours: formData.visitingHours
     };
-    console.log("Submitting hospital registration with payload:", payload);
-    console.log(selectedHospital);
     try {
       await hospitalsignup(payload);
       navigate('/hospital/dashboard');

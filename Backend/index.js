@@ -12,15 +12,58 @@ const authRouter = require('./routes/auth');
 const hospitalRouter = require('./routes/hospital');
 const User = require('./model/auth');
 const HospitalReg = require('./model/hospitalreg');
+const http = require('http');
+const websocket = require('ws');
+const websocketserver = require('ws').WebSocketServer;
+const mongoClient = require('mongodb').MongoClient;
 const { setupNotification } = require('./control/auth');
 const { setupWelcomeNotifications, scheduleWeeklyTrackerReminders } = require('./control/cronjob');
+const { MongoClient } = require('mongodb');
 const localStrategy = require('passport-local').Strategy;
 const googleStrategy = require('passport-google-oauth2').Strategy;
+
+
 const server = express();
+const httpServer = http.createServer(server);
+
+const wss = new websocketserver({ server: httpServer });
+
+wss.on('connection', (ws)=>{
+    console.log('User connected to WebSocket');
+    ws.on('close',()=>{
+        console.log('user disconnected');
+    })
+})
+
+function broadcast(data) {
+    wss.clients.forEach(client=>{
+        if(client.readyState === 1){
+            client.send(JSON.stringify(data))
+        }
+    })
+}
+
+async function watchSuggestion(){
+    const mongo = new MongoClient(process.env.MONGOURI);
+    await mongo.connect();
+    const db = mongo.db('test');
+    const suggestion = db.collection('hospitalregs');
+    const changeStream = suggestion.watch();
+    changeStream.on('change',(change)=>{
+        console.log('Change detected in hospital registrations:', change);
+        broadcast({
+            type: 'hospital_update',
+            payload: change.fullDocument
+        })
+    })
+}
+watchSuggestion().then(()=>{
+    console.log('Watching for changes in hospital registrations...');
+}).catch(err=>{
+    console.error('Error setting up change stream:', err);
+});
 
 const isProduction = process.env.NODE_ENV === 'production';
-
-// Middlewares
 server.use(express.json());
 server.use(cors({
     credentials: true,
@@ -123,6 +166,6 @@ main().catch(err => console.log(err));
 server.use('/auth', authRouter.router);
 server.use('/hospital', hospitalRouter);
 
-server.listen(process.env.PORT || 8080, () => {
+httpServer.listen(process.env.PORT || 5000, () => {
     console.log(`Server is running on port ${process.env.PORT || 8080}`);
 });

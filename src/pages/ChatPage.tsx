@@ -68,6 +68,31 @@ const generateStreamingResponse = async (
 
 
 export const ChatPage: React.FC = () => {
+  const [update, setUpdate] = useState([]);
+    useEffect(()=>{
+      const socket = new WebSocket('ws://localhost:5000');
+      socket.onopen = ()=>{
+        console.log('WebSocket connection established');
+      }
+      socket.onmessage = (event)=>{
+        try{
+          const data = JSON.parse(event.data);
+          if(data.type === 'hospital_update'){
+            setUpdate(data.payload);
+          }
+        }
+        catch(err){
+          console.log(err)
+        }
+      }
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+  
+    },[])
+    useEffect(()=>{
+      console.log("data from sockets",update);
+    },[update])
   const { currentLanguage, t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {

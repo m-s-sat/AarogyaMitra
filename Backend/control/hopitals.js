@@ -34,27 +34,14 @@ exports.getHospitals = async (req, res) => {
     if (!state || !district) {
         return res.status(400).json({ message: 'State and district are required' });
     }
-
-    // Add this log to see exactly what the backend is receiving.
-    console.log(`Received request for State: "${state}", District: "${district}"`);
-
     try {
-        // Trim whitespace from inputs for a more robust query
         const trimmedState = state.trim();
         const trimmedDistrict = district.trim();
-
         const query = {
             state: { $regex: new RegExp(`^${trimmedState}$`, 'i') },
             district: { $regex: new RegExp(`^${trimmedDistrict}$`, 'i') }
         };
-
-        // Add this log to see the exact query being sent to MongoDB.
-        console.log("Executing MongoDB query:", JSON.stringify(query));
-
-        const hospitals = await Hospital.find(query);
-        
-        console.log(`Found ${hospitals.length} hospitals.`);
-        
+        const hospitals = await Hospital.find(query);        
         res.status(200).json(hospitals);
     } catch (error) {
         console.error('Error fetching hospitals:', error);

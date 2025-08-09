@@ -16,8 +16,6 @@ const scheduleWeeklyTrackerReminders = () => {
                 'weeklyLogs.weeklyReminderSent': false,
                 'role': 'patient' // Ensure we only email patients
             });
-
-            console.log(`Found ${usersToRemind.length} users to remind.`);
             for (const user of usersToRemind) {
                 const subject = 'Reminder to Update Your Weekly Health Tracker';
                 const html = `<p>Hi ${user.name},</p><p>This is a friendly reminder to update your weekly health tracker in your Medimitra profile. Staying consistent helps you and your doctor monitor your progress.</p><p>Thank you!</p>`;
