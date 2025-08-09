@@ -294,7 +294,7 @@ const BedManagementDrilldown: React.FC = () => {
   return (
     <div className="p-6">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold">Bed Management — Drilldown</h1>
+        <h1 className="text-2xl font-bold">Bed Management</h1>
         <p className="text-sm text-gray-600 mt-1">Summary view → click a floor to drill down to bed list. Role: <strong>{currentRole}</strong></p>
       </header>
 

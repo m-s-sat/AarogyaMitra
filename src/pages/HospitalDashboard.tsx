@@ -1,4 +1,8 @@
+// HospitalDashboard.tsx
+// ... (your existing imports and component structure)
 import React, { useState, useEffect } from 'react';
+import HospitalProfile from './HospitalProfile.tsx';
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from 'framer-motion';
 import BedManagementComponent from '../components/BedManagementComponent.tsx';
 import {
@@ -178,6 +182,7 @@ interface HospitalStats {
 
 
 export const HospitalDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'beds' | 'doctors' | 'analytics'>('overview');
   const [isEditing, setIsEditing] = useState(false);
   const [hospitalProfile, setHospitalProfile] = useState<HospitalProfile | null>(null);
@@ -385,7 +390,7 @@ export const HospitalDashboard: React.FC = () => {
       const mockStats: HospitalStats = {
         totalPatients: 1250,
         todayAppointments: 45,
-        occupancyRate: 80,
+        occupancyRate: 40,
         revenue: {
           today: 125000,
           thisMonth: 2500000,
@@ -436,29 +441,6 @@ export const HospitalDashboard: React.FC = () => {
     return Math.round((completedFields / totalFields) * 100) || 0;
   };
 
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, section: string, key: string) => {
-    if (!editableProfile) return;
-    const { value } = e.target;
-    setEditableProfile({
-      ...editableProfile,
-      [section]: {
-        ...editableProfile[section as keyof HospitalProfile],
-        [key]: value,
-      },
-    });
-  };
-
-  const handleProfileSave = async () => {
-    if (!editableProfile) return;
-    // BACKEND: API call to update profile
-    // await api.put('/hospital/profile', editableProfile);
-    console.log('Saving profile:', editableProfile);
-    setHospitalProfile(editableProfile);
-    setIsEditing(false);
-    // Recalculate completion after save
-    const newCompletion = calculateProfileCompletion(editableProfile);
-    setHospitalProfile(prev => prev ? { ...prev, profileCompletion: { ...prev.profileCompletion, percentage: newCompletion } } : null);
-  };
 
   const handleDoctorFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -559,7 +541,7 @@ export const HospitalDashboard: React.FC = () => {
                 </div>
               </div>
               <button
-                onClick={() => setActiveTab('profile')}
+                onClick={() => navigate('/hospital/profile')}
                 className="bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition-colors"
               >
                 Complete Profile
@@ -699,8 +681,9 @@ export const HospitalDashboard: React.FC = () => {
                     <span className="font-medium text-emerald-700">Manage Appointments</span>
                   </button>
 
-                  <button className="flex items-center space-x-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                  <button className="flex items-center space-x-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"onClick={() => setActiveTab('beds')}>
                     <Activity className="w-6 h-6 text-purple-600" />
+                    
                     <span className="font-medium text-purple-700">Update Bed Status</span>
                   </button>
                 </div>
@@ -778,14 +761,60 @@ export const HospitalDashboard: React.FC = () => {
  {/* Bed Management Tab */}
   {activeTab === 'beds' && <BedManagementComponent />}
           {/* Analytics Tab */}
-          {activeTab === 'analytics' && (
+          {activeTab === 'analytics' && hospitalStats && hospitalProfile && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="space-y-8">
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Hospital Analytics</h3>
-                <div className="text-center py-12 text-gray-500">
-                  <BarChart3 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p>Analytics dashboard would be implemented here</p>
-                  <p className="text-sm">Including charts, trends, and detailed reports</p>
+                
+                {/* Detailed Occupancy */}
+                <div className="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4">Detailed Bed Status</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Total Beds</p>
+                      <p className="text-xl font-semibold text-gray-800">{hospitalProfile.infrastructure.totalBeds}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Occupied</p>
+                      <p className="text-xl font-semibold text-red-600">{hospitalProfile.infrastructure.occupiedBeds}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Available</p>
+                      <p className="text-xl font-semibold text-emerald-600">{hospitalProfile.infrastructure.availableBeds}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Departmental Analytics */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="px-6 py-4 border-b">
+                    <h4 className="text-lg font-bold text-gray-900">Departmental Performance</h4>
+                    <p className="text-sm text-gray-600">Breakdown of key metrics by department</p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Appointments</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Occupancy Rate</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctors</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {Object.entries(hospitalStats.departmentStats).map(([department, stats]) => (
+                          <tr key={department}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{department}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stats.appointments}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stats.occupancy}%</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                               {hospitalProfile.doctors.departmentWiseCount[department] || 0}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </motion.div>

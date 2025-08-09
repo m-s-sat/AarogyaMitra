@@ -168,22 +168,21 @@ export const Header: React.FC = () => {
                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
                         className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
                       >
-                        <Link
+                        {user?.role==='patient' ? <Link
                           to="/profile"
                           className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setShowProfileMenu(false)}
                         >
                           <User className="w-4 h-4" />
                           <span>{t('header.profile')}</span>
-                        </Link>
-                        <Link
-                          to="/settings"
+                        </Link> : <Link
+                          to="/hospital/profile"
                           className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setShowProfileMenu(false)}
                         >
-                          <Settings className="w-4 h-4" />
-                          <span>{t('header.settings')}</span>
-                        </Link>
+                          <User className="w-4 h-4" />
+                          <span>{t('header.profile')}</span>
+                        </Link>}
                         <hr className="my-2 border-gray-200" />
                         <button
                           onClick={handleLogout}
@@ -247,13 +246,17 @@ export const Header: React.FC = () => {
                       </div>
                       <span className="font-medium">{user?.name}</span>
                     </div>
-                    <Link
+                    {user?.role==='patient' ? <Link
                       to="/profile"
                       className="block text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => setShowMobileMenu(false)}
                     >
                       {t('header.profile')}
-                    </Link>
+                    </Link> : <Link 
+                      to={'/hospital/profile'}
+                      className='block text-gray-700 hover:text-gray-900 transition-colors'
+                      onClick={() => setShowMobileMenu(false)}
+                      ></Link>}
                     <button
                       onClick={handleLogout}
                       className="block text-red-600 hover:text-red-700 transition-colors text-left"
