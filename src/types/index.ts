@@ -146,7 +146,7 @@ export interface Hospital {
     type?: string;
     coordinates?: {
       lat?: number;
-      lng?: number;
+      long?: number;
     };
     state?: string;
     district?: string;
@@ -165,3 +165,12 @@ export interface Hospital {
   };
 }
 
+export interface HospitalFound {
+  _id: string;
+  lat: number;
+  long: number;
+  hospital_name: string;
+  address: string;
+  state: string;
+  district: string;
+}

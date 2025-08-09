@@ -9,13 +9,13 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 const authRouter = require('./routes/auth');
+const hospitalRouter = require('./routes/hospital');
 const User = require('./model/auth');
 const HospitalReg = require('./model/hospitalreg');
 const { setupNotification } = require('./control/auth');
 const { setupWelcomeNotifications, scheduleWeeklyTrackerReminders } = require('./control/cronjob');
 const localStrategy = require('passport-local').Strategy;
 const googleStrategy = require('passport-google-oauth2').Strategy;
-
 const server = express();
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -121,6 +121,7 @@ main().catch(err => console.log(err));
 
 
 server.use('/auth', authRouter.router);
+server.use('/hospital', hospitalRouter);
 
 server.listen(process.env.PORT || 8080, () => {
     console.log(`Server is running on port ${process.env.PORT || 8080}`);
