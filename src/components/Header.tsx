@@ -60,7 +60,7 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center space-x-2">
+          <Link to={isAuthenticated && user?.role === 'patient' ? '/dashboard' : user?.role==='hospital' ? '/hospital/dashboard' : '/'} className="flex items-center space-x-2">
             <div className="w-14 h-14 rounded-lg flex items-center justify-center">
               <img src={logo} alt="Aarogya Mitra" className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto" />
             </div>

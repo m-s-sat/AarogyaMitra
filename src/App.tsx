@@ -15,7 +15,6 @@ import { ProfilePage } from './pages/ProfilePage';
 import { MyMedicinesPage } from './pages/MyMedicinesPage';
 import { HelpdeskPage } from './pages/HelpdeskPage';
 import { HospitalDashboard } from './pages/HospitalDashboard';
-import { HospitalProfile } from './pages/HospitalProfile.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -87,14 +86,6 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <HospitalDashboard />
-              </ProtectedRoute>
-            }
-          ></Route>
-          <Route
-            path='/hospital/profile'
-            element={
-              <ProtectedRoute>
-                <HospitalProfile></HospitalProfile>
               </ProtectedRoute>
             }
           ></Route>

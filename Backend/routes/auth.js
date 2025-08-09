@@ -9,7 +9,8 @@ const {
     forgotpass,
     updateProfile,
     createHospital,
-    checkAuthStatus
+    checkAuthStatus,
+    addDoctor
 } = require('../control/auth');
 const { isAuth } = require('../common/common');
 
@@ -27,6 +28,7 @@ router
     })
     .post('/reset-request', setForgotPassToken)
     .post('/password-reset', forgotpass)
-    .patch('/profileupdate', isAuth, updateProfile);
+    .patch('/profileupdate', isAuth, updateProfile)
+    .patch('/update/doctor', isAuth, addDoctor);
 
 exports.router = router;

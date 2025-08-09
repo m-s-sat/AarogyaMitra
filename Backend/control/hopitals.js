@@ -1,6 +1,5 @@
 const Hospital = require("../model/hospitals");
 
-// Fetches all unique state names, case-insensitively.
 exports.getStates = async (req, res) => {
     try {
         const states = await Hospital.distinct('state');
@@ -10,8 +9,6 @@ exports.getStates = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
-
-// Fetches unique district names for a given state, case-insensitively.
 exports.getDistricts = async (req, res) => {
     const { state } = req.body;
     if (!state) {
@@ -28,7 +25,6 @@ exports.getDistricts = async (req, res) => {
     }
 }
 
-// Fetches all hospitals for a given state and district, case-insensitively.
 exports.getHospitals = async (req, res) => {
     const { state, district } = req.body;
     if (!state || !district) {

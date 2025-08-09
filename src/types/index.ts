@@ -4,9 +4,9 @@ export interface User {
   phone?: string;
   preferredLanguage: string;
   avatar?: string;
-  password?:string;
-  dob?:string,
-  pincode?:number,
+  password?: string;
+  dob?: string,
+  pincode?: number,
   emergencyContact?: {
     name?: string;
     phone?: string;
@@ -71,7 +71,7 @@ export interface ProfileData {
   };
 }
 
-export interface UserQuery{
+export interface UserQuery {
   role: string | null,
   email: string,
   password: string
@@ -85,18 +85,6 @@ export interface Appointment {
   time: string;
   type: 'physical' | 'video';
   status: 'upcoming' | 'completed' | 'cancelled';
-}
-
-export interface Doctor {
-  id: string;
-  name: string;
-  department: string;
-  specialization: string;
-  rating: number;
-  experience: number;
-  availableSlots: string[];
-  consultationFee: number;
-  image: string;
 }
 
 export interface Report {
@@ -135,7 +123,17 @@ export interface Language {
   nativeName: string;
   flag: string;
 }
-
+export interface Doctor {
+  name: string | '';
+  specialization: string | '';
+  registrationNumber: string | '';
+  department: string | '';
+  phone: string | '';
+  email: string | '';
+  qualification: string | '';
+  experience: number | 0;
+  days: string[] | [];
+}
 export interface Hospital {
   role: string;
   hospital?: {
@@ -163,6 +161,7 @@ export interface Hospital {
     start?: string;
     end?: string;
   };
+  doctors?: Doctor[];
 }
 
 export interface HospitalFound {

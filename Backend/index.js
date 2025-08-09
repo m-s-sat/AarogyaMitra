@@ -47,7 +47,7 @@ async function watchSuggestion(){
     const mongo = new MongoClient(process.env.MONGOURI);
     await mongo.connect();
     const db = mongo.db('test');
-    const suggestion = db.collection('hospitalregs');
+    const suggestion = db.collection('bookings');
     const changeStream = suggestion.watch();
     changeStream.on('change',(change)=>{
         console.log('Change detected in hospital registrations:', change);

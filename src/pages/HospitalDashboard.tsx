@@ -6,36 +6,20 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from 'framer-motion';
 import BedManagementComponent from '../components/BedManagementComponent.tsx';
 import {
-  Building2,
   Users,
   Calendar,
   TrendingUp,
   AlertCircle,
   CheckCircle,
-  Edit3,
-  Save,
   Plus,
-  Eye,
-  EyeOff,
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
   Bed,
   Activity,
-  FileText,
-  Shield,
   Settings,
   BarChart3,
   UserPlus,
   Bell,
-  Download,
-  Upload,
-  Search,
-  Filter,
   MoreVertical,
   X,
-  Check
 } from 'lucide-react';
 
 // Assuming these types are correctly defined in '../types/hospital'
@@ -457,7 +441,6 @@ export const HospitalDashboard: React.FC = () => {
         id: `DOC${hospitalProfile.doctors.totalRegistered + 1}`,
         isVerified: false
       };
-
       const updatedDoctorsList = [...hospitalProfile.doctors.doctorsList, newDoctor];
       const updatedDepartmentCount = {
         ...hospitalProfile.doctors.departmentWiseCount,

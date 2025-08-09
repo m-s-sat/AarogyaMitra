@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const doctorSchema = new Schema({
+    name: { type: String, required: true },
+    specialization: { type: String, required: true },
+    department: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    qualification: { type: String, required: true },
+    experience: { type: Number, required: true },
+    days: {
+        type: [String],
+        required: true
+    }
+})
+
 const hospitalRegSchema = new Schema({
     role: {
         type: String,
@@ -8,7 +22,6 @@ const hospitalRegSchema = new Schema({
         default: 'hospital'
     },
     hospital: {
-        id: { type: String, required: true },
         name: { type: String, required: true },
         address: { type: String, required: true },
         type: { type: String, required: true },
@@ -40,6 +53,7 @@ const hospitalRegSchema = new Schema({
         start: { type: String },
         end: { type: String }
     },
+    doctors: [doctorSchema]
 }, { timestamps: true });
 
 const HospitalReg = mongoose.model('Hospitalreg', hospitalRegSchema);

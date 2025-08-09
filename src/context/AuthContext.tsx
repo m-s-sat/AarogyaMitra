@@ -148,7 +148,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
       setUser(data.data);
-      alert(data.message);
     }
   };
   const getStates = useCallback(async () => {

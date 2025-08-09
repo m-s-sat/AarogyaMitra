@@ -148,3 +148,19 @@ exports.updateProfile = async(req,res)=>{
         res.status(500).json({ message: "An error occurred while updating your profile." });
     }
 }
+exports.addDoctor = async(req,res)=>{
+    try{
+        const {id, role} = req.user;
+        const doctorData = req.body;
+        if(!doctorData) return res.status(400).json({message:"Unable to fetch doctor data."});
+        if(!id) return res.status(400).json({message:"Unable to fetch your id."});
+        if(role!=='hospital') return res.status(403).json({message:"You are not authorized to add a doctor."});
+        const hospital = await HospitalReg.findByIdAndUpdate({_id:id},{$push:{doctors:doctorData}}, {new:true});
+        if(!hospital) return res.status(500).json({message:"Unable to add doctor in our database."});
+        return res.status(201).json({ message: "Doctor added successfully.", data: hospital });
+    }
+    catch(err){
+        console.error("Error adding doctor:", err);
+        res.status(500).json({ message: "An error occurred while adding the doctor." });
+    }
+}
