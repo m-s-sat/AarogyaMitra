@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { 
   Building2, 
   MapPin, 
@@ -19,8 +21,18 @@ import {
   Archive,
   X,
   Upload,
-  Map
+  Map,
+  ArrowLeft
 } from 'lucide-react';
+import { Header } from '../components/Header.jsx';
+
+// Fix for default markers in react-leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 interface HospitalProfileData {
   generalInfo: {
@@ -42,7 +54,7 @@ interface HospitalProfileData {
       emergencyPhone: string;
       email: string;
       website: string;
-    };
+    };  
     coordinates: {
       latitude: number;
       longitude: number;
@@ -80,7 +92,11 @@ interface HospitalProfileData {
   }>;
 }
 
-export const HospitalProfile: React.FC = () => {
+interface HospitalProfileProps {
+  onNavigate: (page: string) => void;
+}
+
+export const HospitalProfile: React.FC<HospitalProfileProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'contact' | 'administrative' | 'departments'>('general');
   const [isEditing, setIsEditing] = useState(false);
   const [showAddDepartmentModal, setShowAddDepartmentModal] = useState(false);
@@ -269,14 +285,7 @@ export const HospitalProfile: React.FC = () => {
     setShowAddAccreditationModal(false);
   };
 
-  const archiveDepartment = (departmentId: string) => {
-    setProfileData(prev => ({
-      ...prev,
-      departments: prev.departments.map(dept => 
-        dept.id === departmentId ? { ...dept, status: 'archived' } : dept
-      )
-    }));
-  };
+
 
   const toggleServiceStatus = (serviceId: string) => {
     setProfileData(prev => ({
@@ -293,10 +302,35 @@ export const HospitalProfile: React.FC = () => {
     { id: 'administrative', label: 'Administrative & Compliance', icon: Shield },
     { id: 'departments', label: 'Departments & Services', icon: Stethoscope }
   ];
+const archiveDepartment = (departmentId: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      departments: prev.departments.map(dept =>
+        dept.id === departmentId ? { ...dept, status: 'archived' } : dept
+      )
+    }));
+  };
 
+  // Function to delete a department
+  const deleteDepartment = (departmentId: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      departments: prev.departments.filter(dept => dept.id !== departmentId)
+    }));
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
+      {/* <Header /> removed to prevent double header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Dashboard
+        </button>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -649,7 +683,7 @@ export const HospitalProfile: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Latitude
@@ -691,10 +725,30 @@ export const HospitalProfile: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-gray-100 rounded-lg p-8 text-center">
-                  <Map className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-600">Map view would be integrated here</p>
-                  <p className="text-sm text-gray-500">Showing hospital location at coordinates: {profileData.contactLocation.coordinates.latitude}, {profileData.contactLocation.coordinates.longitude}</p>
+                {/* Interactive Map */}
+                <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
+                  <MapContainer
+                    center={[profileData.contactLocation.coordinates.latitude, profileData.contactLocation.coordinates.longitude]}
+                    zoom={15}
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={[profileData.contactLocation.coordinates.latitude, profileData.contactLocation.coordinates.longitude]}>
+                      <Popup>
+                        <div className="text-center">
+                          <h4 className="font-semibold text-gray-900">{profileData.generalInfo.name}</h4>
+                          <p className="text-sm text-gray-600">{profileData.contactLocation.address.street}</p>
+                          <p className="text-sm text-gray-600">
+                            {profileData.contactLocation.address.city}, {profileData.contactLocation.address.state}
+                          </p>
+                          <p className="text-sm text-blue-600 mt-1">{profileData.contactLocation.contact.mainPhone}</p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  </MapContainer>
                 </div>
               </div>
             </motion.div>
@@ -911,7 +965,8 @@ export const HospitalProfile: React.FC = () => {
                           >
                             <Archive className="w-4 h-4" />
                           </button>
-                          <button className="text-red-600 hover:text-red-700">
+                          <button className="text-red-600 hover:text-red-700"
+                            onClick={()=>{deleteDepartment(department.id)}}>
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
