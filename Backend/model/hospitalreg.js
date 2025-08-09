@@ -1,5 +1,3 @@
-// backend/model/hospitalreg.js
-
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
@@ -13,13 +11,12 @@ const hospitalRegSchema = new Schema({
         id: { type: String, required: true },
         name: { type: String, required: true },
         address: { type: String, required: true },
-        govId: { type: String, required: true },
         type: { type: String, required: true },
         state: { type: String, required: true },
         district: { type: String, required: true },
         coordinates: {
-            lat: { type: Number },
-            lng: { type: Number }
+            lat: { type: Number, required: true },
+            long: { type: Number, required: true }
         }
     },
     admin: {

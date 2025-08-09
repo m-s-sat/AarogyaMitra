@@ -5,8 +5,9 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useCallback,
 } from "react";
-import { Hospital, User, UserQuery } from "../types";
+import { Hospital, HospitalFound, User, UserQuery } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +17,12 @@ interface AuthContextType {
   isAuthenticated: boolean;
   updateUser: (userData: Partial<User>) => void;
   hospitalsignup: (hopitalData: Hospital) => Promise<void>;
+  getStates: () => Promise<void>;
+  getDistricts: (state: string) => Promise<void>;
+  getHospitals: (state: string, district: string) => Promise<void>;
+  states: string[];
+  districts: string[];
+  hospitals: HospitalFound[];
   isLoading: boolean;
 }
 
@@ -35,7 +42,10 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [hospital, setHospital] = useState<Hospital | null>(null);
+  // const [hospital, setHospital] = useState<Hospital | null>(null);
+  const [states, setStates] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -141,7 +151,73 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       alert(data.message);
     }
   };
+  const getStates = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/hospital/states', { method: 'GET', credentials: 'include' });
+      if (!response.ok) throw new Error("Failed to fetch states");
+      const data = await response.json();
+      setStates(data);
+    } catch (error) {
+      console.error("Error fetching states:", error);
+      setStates([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
+  const getDistricts = useCallback(async (state: string) => {
+    if (!state) return;
+    setIsLoading(true);
+    setDistricts([]);
+    try {
+      const response = await fetch('/hospital/districts', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ state }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch districts");
+      const data = await response.json();
+      setDistricts(data);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+      setDistricts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const getHospitals = useCallback(async (state: string, district: string) => {
+    if (!state || !district) return;
+    setIsLoading(true);
+    setHospitals([]);
+    try {
+      const response = await fetch('/hospital/hospitals', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ state, district }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch hospitals");
+      const rawData = await response.json();
+      console.log("Raw hospital data:", rawData);
+      const formattedHospitals = rawData.map((hospital: HospitalFound) => ({
+        _id: hospital._id,
+        hospital_name: hospital.hospital_name || 'Hospital Name not available',
+        address: hospital.state + ', ' + hospital.district || 'Address not available',
+        lat: hospital.lat || 0,
+        long: hospital.long || 0,
+      }));
+      setHospitals(formattedHospitals);
+
+    } catch (error) {
+      console.error("Error fetching hospitals:", error);
+      setHospitals([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
   const value = {
     user,
     login,
@@ -151,6 +227,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     updateUser,
     hospitalsignup,
+    getStates,
+    getDistricts,
+    getHospitals,
+    states,
+    districts,
+    hospitals,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
