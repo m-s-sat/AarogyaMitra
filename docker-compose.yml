@@ -3,26 +3,19 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./Docker-files/node
-      dockerfile: Dockerfile.backend
-    container_name: medimitra-backend
+      context: .
+      dockerfile: Docker-files/node/Dockerfile
     ports:
       - "5000:5000"
     depends_on:
       - agent
-    networks:
-      - medimitra-net
+    environment:
+      - NODE_ENV=production
 
   agent:
     build:
-      context: ./Docker-files/python
-      dockerfile: Dockerfile.agent
-    container_name: medimitra-agent
+      context: .
+      dockerfile: Docker-files/python/Dockerfile
     ports:
       - "8000:8000"
-    networks:
-      - medimitra-net
 
-networks:
-  medimitra-net:
-    driver: bridge
