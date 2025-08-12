@@ -64,7 +64,7 @@ watchSuggestion().then(()=>{
 });
 
 const isProduction = process.env.NODE_ENV === 'production';
-app.use(express.static(path.join(__dirname, 'dist')));
+server.use(express.static(path.join(__dirname, 'dist')));
 server.use(express.json());
 server.use(cors({
     credentials: true,
