@@ -11,7 +11,7 @@ const cron = require('node-cron');
 
 const emailTemplate = fs.readFileSync(path.join(__dirname,'../template/emailTemplate.html'), 'utf-8');
 const welcomeEmailTemplate = fs.readFileSync(
-    path.join(__dirname, '../template/welcomeEmail.html'), 
+    path.join(__dirname, '../template/welcomeemail.html'), 
     'utf-8'
 );
 
