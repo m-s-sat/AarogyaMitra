@@ -21,7 +21,7 @@ const { setupWelcomeNotifications, scheduleWeeklyTrackerReminders } = require('.
 const { MongoClient } = require('mongodb');
 const localStrategy = require('passport-local').Strategy;
 const googleStrategy = require('passport-google-oauth2').Strategy;
-
+const path = require('path');
 
 const server = express();
 const httpServer = http.createServer(server);
