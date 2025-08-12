@@ -166,7 +166,7 @@ main().catch(err => console.log(err));
 
 server.use('/auth', authRouter.router);
 server.use('/hospital', hospitalRouter);
-server.get('*', (req, res) => {
+server.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
