@@ -21,6 +21,8 @@ import {
   MoreVertical,
   X,
 } from 'lucide-react';
+import { Doctor } from '../types/index.ts';
+import { useAuth } from '../context/AuthContext.tsx';
 
 // Assuming these types are correctly defined in '../types/hospital'
 interface HospitalProfile {
@@ -103,7 +105,7 @@ interface HospitalProfile {
   };
   doctors: {
     totalRegistered: number;
-    doctorsList: HospitalDoctor[];
+    doctorsList: Doctor[];
     departmentWiseCount: Record<string, number>;
   };
   profileCompletion: {
@@ -166,6 +168,7 @@ interface HospitalStats {
 
 
 export const HospitalDashboard: React.FC = () => {
+  const {loginHospital, addDoctor} = useAuth()
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'beds' | 'doctors' | 'analytics'>('overview');
   const [isEditing, setIsEditing] = useState(false);
@@ -191,7 +194,7 @@ export const HospitalDashboard: React.FC = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isAddDoctorModalOpen]);
-  
+
   const [newDoctorForm, setNewDoctorForm] = useState<Omit<HospitalDoctor, 'id' | 'isVerified'>>({
     name: '',
     specialization: '',
@@ -203,7 +206,7 @@ export const HospitalDashboard: React.FC = () => {
     experienceYears: 0,
     opdDays: [],
   });
-
+  const [hospitalDoctors, setHospitalDoctors] = useState<Doctor>([]);
   // State to hold a copy of the profile data for editing
   const [editableProfile, setEditableProfile] = useState<HospitalProfile | null>(null);
 
@@ -436,12 +439,25 @@ export const HospitalDashboard: React.FC = () => {
     if (hospitalProfile) {
       // BACKEND: API call to add new doctor
       // await api.post('/hospital/doctors', newDoctorForm);
+      const doctor : Doctor = {
+        specialization: newDoctorForm.specialization,
+        name: newDoctorForm.name,
+        registrationNumber: newDoctorForm.registrationNumber,
+        department: newDoctorForm.department,
+        phone: newDoctorForm.contactNumber,
+        email: newDoctorForm.email,
+        qualification: newDoctorForm.qualifications,
+        experienceYears: newDoctorForm.experienceYears,
+        opdDays: newDoctorForm.opdDays,
+        isVerified: false
+      };
+      addDoctor(doctor);
       const newDoctor = {
         ...newDoctorForm,
         id: `DOC${hospitalProfile.doctors.totalRegistered + 1}`,
         isVerified: false
       };
-      const updatedDoctorsList = [...hospitalProfile.doctors.doctorsList, newDoctor];
+      const updatedDoctorsList = loginHospital?.doctors || [];
       const updatedDepartmentCount = {
         ...hospitalProfile.doctors.departmentWiseCount,
         [newDoctor.department]: (hospitalProfile.doctors.departmentWiseCount[newDoctor.department] || 0) + 1

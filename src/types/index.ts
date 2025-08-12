@@ -131,8 +131,9 @@ export interface Doctor {
   phone: string | '';
   email: string | '';
   qualification: string | '';
-  experience: number | 0;
-  days: string[] | [];
+  experienceYears: number | 0;
+  opdDays: string[] | [];
+  isVerified?: boolean;
 }
 export interface Hospital {
   role: string;

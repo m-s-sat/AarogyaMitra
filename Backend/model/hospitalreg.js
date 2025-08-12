@@ -5,14 +5,16 @@ const doctorSchema = new Schema({
     name: { type: String, required: true },
     specialization: { type: String, required: true },
     department: { type: String, required: true },
+    registrationNumber: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
     qualification: { type: String, required: true },
-    experience: { type: Number, required: true },
-    days: {
+    experienceYears: { type: Number, required: true },
+    opdDays: {
         type: [String],
         required: true
-    }
+    },
+    isVerified: { type: Boolean, default: false },
 })
 
 const hospitalRegSchema = new Schema({

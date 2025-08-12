@@ -15,6 +15,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { MyMedicinesPage } from './pages/MyMedicinesPage';
 import { HelpdeskPage } from './pages/HelpdeskPage';
 import { HospitalDashboard } from './pages/HospitalDashboard';
+import HospitalProfile from './pages/HospitalProfile.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -24,12 +25,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Public Route Component (redirect to dashboard if authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loginHospital } = useAuth();
   if(!isAuthenticated) return <>{children}</>;
-  if(user?.role === 'hospital') {
+  if(user?.role === 'patient') {
+    return <Navigate to="/dashboard" />;
+  }
+  if(loginHospital?.role === 'hospital') {
     return <Navigate to="/hospital/dashboard" />;
   }
-  return <Navigate to="/dashboard" />;
 };
 
 function AppContent() {
@@ -86,6 +89,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <HospitalDashboard />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path='/hospital/profile'
+            element={
+              <ProtectedRoute>
+                <HospitalProfile></HospitalProfile>
               </ProtectedRoute>
             }
           ></Route>

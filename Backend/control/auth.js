@@ -157,7 +157,12 @@ exports.addDoctor = async(req,res)=>{
         if(role!=='hospital') return res.status(403).json({message:"You are not authorized to add a doctor."});
         const hospital = await HospitalReg.findByIdAndUpdate({_id:id},{$push:{doctors:doctorData}}, {new:true});
         if(!hospital) return res.status(500).json({message:"Unable to add doctor in our database."});
-        return res.status(201).json({ message: "Doctor added successfully.", data: hospital });
+        req.login(hospital, (err)=>{
+            if(err){
+                return res.status(500).json({ message: "An error occurred while logging in." });
+            }
+            return res.status(201).json({ message: "Doctor added successfully.", data: hospital });
+        })
     }
     catch(err){
         console.error("Error adding doctor:", err);

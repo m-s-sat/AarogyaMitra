@@ -7,10 +7,12 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { Hospital, HospitalFound, User, UserQuery } from "../types";
+import { Doctor, Hospital, HospitalFound, User, UserQuery } from "../types";
 
 interface AuthContextType {
   user: User | null;
+  loginHospital: Hospital | null;
+  addDoctor: (update: Doctor) => Promise<void>;
   login: (userData: UserQuery) => Promise<void>;
   signup: (userData: User) => Promise<void>;
   logout: () => Promise<void>;
@@ -43,6 +45,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   // const [hospital, setHospital] = useState<Hospital | null>(null);
+  const [loginHospital, setLoginHospital] = useState<Hospital | null>(null);
   const [states, setStates] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -56,9 +59,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
         if (response.ok) {
           const userData = await response.json();
-          setUser(userData);
+          if(userData.role === 'patient') setUser(userData);
+          if(userData.role === 'hospital') setLoginHospital(userData);
         } else {
           setUser(null);
+          setLoginHospital(null);
         }
       } catch (error) {
         console.error("Could not fetch user status:", error);
@@ -96,7 +101,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error("Unauthorized");
     }
     const data = await response.json();
-    setUser(data);
+    if(data.role==='patient') setUser(data);
+    if(data.role==='hospital') setLoginHospital(data);
   };
 
   const signup = async (userData: User) => {
@@ -129,9 +135,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       credentials: "include",
     });
     if (!response.ok) throw new Error("Unable to logout the user");
-
-    await response.json();
-    setUser(null);
+    if(user?.role==='patient') setUser(null);
+    if(loginHospital?.role==='hospital') setLoginHospital(null);
   };
 
   const updateUser = async (newUserData: Partial<User>) => {
@@ -217,12 +222,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     }
   }, []);
+  const addDoctor = async (update:Doctor) =>{
+    const response = await fetch('/auth/update/doctor', {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(update),
+    });
+    const data = await response.json();
+    console.log("Add doctor response data:", data.data);
+    if(!response.ok) {
+      alert(data.message || "Error adding doctor");
+    }
+    setLoginHospital(data.data);
+  }
   const value = {
     user,
     login,
     signup,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user || !!loginHospital,
     isLoading,
     updateUser,
     hospitalsignup,
@@ -232,6 +251,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     states,
     districts,
     hospitals,
+    loginHospital,
+    addDoctor,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
