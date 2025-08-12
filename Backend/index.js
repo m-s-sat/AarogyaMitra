@@ -64,6 +64,7 @@ watchSuggestion().then(()=>{
 });
 
 const isProduction = process.env.NODE_ENV === 'production';
+app.use(express.static(path.join(__dirname, 'dist')));
 server.use(express.json());
 server.use(cors({
     credentials: true,
@@ -165,6 +166,9 @@ main().catch(err => console.log(err));
 
 server.use('/auth', authRouter.router);
 server.use('/hospital', hospitalRouter);
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 httpServer.listen(process.env.PORT || 5000, () => {
     console.log(`Server is running on port ${process.env.PORT || 8080}`);
