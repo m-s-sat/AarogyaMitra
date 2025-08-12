@@ -1,5 +1,6 @@
 FROM node:current-alpine3.22 AS frontend
 WORKDIR /app
+RUN apk add --no-cache git
 RUN git clone https://github.com/m-s-sat/MediMitra.git
 WORKDIR /app/MediMitra
 RUN npm install && npm run build
