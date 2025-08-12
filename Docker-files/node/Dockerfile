@@ -7,7 +7,7 @@ RUN npm install && npm run build
 
 FROM node:current-alpine3.22 AS backend
 WORKDIR /app
-COPY --from=frontend /app/MediMitra/build ./MediMitra/Backend/build
+COPY --from=frontend /app/MediMitra/dist ./MediMitra/Backend/dist
 WORKDIR /app/MediMitra/Backend
 RUN npm install
 
