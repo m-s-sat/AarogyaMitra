@@ -13,6 +13,7 @@ services:
       - Backend/.env
 
   agent:
+    container_name: agent
     build:
       context: .
       dockerfile: Docker-files/python/Dockerfile
