@@ -149,7 +149,7 @@ class chat(BaseModel):
     static_system : str
     dynamic_system : str
     summary : str 
-    messages : Annotated[list[BaseMessage], add_messages]
+    messages : list[BaseMessage]
     @computed_field(return_type=BaseMessage)
     @property
     def model_in_sys(self):
@@ -171,7 +171,8 @@ def chat_node(chats: chat):
     input_ = [chats.model_in_sys]+[chats.model_in_summary]
     input_ = input_ + chats.messages
     response = llm.invoke(input_)
-    return {"messages":[response]}
+    messages = chats.messages.append(response)
+    return {"messages":messages}
 
 # %%
 tool_dict = {tool.name : tool for tool in tools}
@@ -185,11 +186,11 @@ def tool_node(chat: chat):
             tool = tool_dict[tool_name]
             tool_response = tool.invoke(tool_call["args"])
             tool_message = ToolMessage(content=tool_response, name=tool_name, tool_call_id=tool_call["id"])
-            chat.messages.append(tool_message)
+            messages = chat.messages.append(tool_message)
         except Exception as e:
             error_message = ToolMessage(content=f"{str(e)}", name = tool_name, tool_call_id=tool_call["id"])
-            chat.messages.append(error_message)
-    return chat
+            messages = chat.messages.append(error_message)
+    return {"messages":messages}
 
 # %%
 def tool_call_condition(chats: chat):
@@ -221,10 +222,10 @@ def history(chats: chat):
     
     result = summary_llm.invoke(input=model_in)
     
-    chats.summary = result.content
-    chats.messages = chats.messages[1:]
+    summary = result.content
+    messages = chats.messages[1:]
     
-    return chats
+    return {"summary":summary,"messages":messages}
 
 # %%
 builder = StateGraph(chat)
