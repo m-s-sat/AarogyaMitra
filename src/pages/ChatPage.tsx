@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Bot, User } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../context/AuthContext';
 
 interface Message {
   id: string;
@@ -18,11 +19,13 @@ interface Message {
 // --- Helper Function for Streaming API Call ---
 /**
  * Fetches a streaming response from the backend.
+ * @param id
  * @param userMessage The message to send to the backend.
  * @param onChunk A callback function that handles each received text chunk.
  * @param onEnd A callback function that runs when the stream is finished.
  */
 const generateStreamingResponse = async (
+  id: string,
   userMessage: string,
   onChunk: (chunk: string) => void,
   onEnd: () => void
@@ -35,7 +38,8 @@ const generateStreamingResponse = async (
         'Accept': 'text/event-stream',
       },
       // Sending as a JSON object is more standard for APIs
-      body: JSON.stringify({ message: userMessage , id:'mrinal'}),
+      body: JSON.stringify({ message: userMessage , id: id || 'unknown_user' }),
+      credentials: 'include',
     });
 
     if (!response.ok || !response.body) {
@@ -68,32 +72,8 @@ const generateStreamingResponse = async (
 
 
 export const ChatPage: React.FC = () => {
-  const [update, setUpdate] = useState([]);
-    useEffect(()=>{
-      const socket = new WebSocket('ws://localhost:5000');
-      socket.onopen = ()=>{
-        console.log('WebSocket connection established');
-      }
-      socket.onmessage = (event)=>{
-        try{
-          const data = JSON.parse(event.data);
-          if(data.type === 'hospital_update'){
-            setUpdate(data.payload);
-          }
-        }
-        catch(err){
-          console.log(err)
-        }
-      }
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-  
-    },[])
-    useEffect(()=>{
-      console.log("data from sockets",update);
-    },[update])
   const { currentLanguage, t } = useLanguage();
+  const {user} = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -148,6 +128,7 @@ export const ChatPage: React.FC = () => {
 
     // 3. Call the streaming function
     await generateStreamingResponse(
+      user?.id || 'anonymous_user',
       trimmedInput,
       // onChunk: This function appends new text to the assistant's message
       (chunk: string) => {

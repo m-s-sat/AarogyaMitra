@@ -46,19 +46,19 @@ If you want to know about some type of disease or symptom related data use the d
 dynamic_sys= f"{get_current_datetime_response()}, Location of the user= lat=16.27939453125&lon=80.58837890625 \n"
 
 
-async def stream_chat(message,id):
+def stream_chat(message,id):
     input_ = message
     id_ = id
     
     global static_sys
     global dynamic_sys
-    dynamic = dynamic_sys + " User id: " + id_
+    dynamic = f"{dynamic_sys} ,User id: {id_}"
     state = chat(static_system=static_sys,
                  dynamic_system=dynamic,
                  u1="",
                  summary="",
                  messages=[HumanMessage(input_)])
-    async for chunk, meta in graph.astream(input=state,
+    for chunk, meta in graph.stream(input=state,
                                 config={"configurable": {"thread_id": id_}},
                                 stream_mode="messages"
                                 ):

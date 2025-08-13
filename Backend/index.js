@@ -170,6 +170,6 @@ server.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-httpServer.listen(process.env.PORT || 5000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 8080}`);
+httpServer.listen(process.env.PORT || 5001, () => {
+    console.log(`Server is running on port ${process.env.PORT || 5001}`);
 });
