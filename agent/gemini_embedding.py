@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-embedding_model = GoogleGenerativeAIEmbeddings(model='gemini-embedding-001')
+embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
 
 
 

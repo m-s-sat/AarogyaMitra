@@ -47,7 +47,6 @@ If you want to know about some type of disease or symptom related data use the d
 
 
 def stream_chat(message,id):
-    dynamic_sys= f"{get_current_datetime_response()}, Location of the user= lat=16.27939453125&lon=80.58837890625 \n"
     input_ = message
     id_ = id
     # config = {"configurable": {"thread_id": id_}}
