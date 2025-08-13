@@ -108,11 +108,11 @@ passport.use("local", new localStrategy(async function verify(username, password
         return done(err);
     }
 }));
-
+server.set('trust proxy', 1);
 passport.use("google", new googleStrategy({
     clientID: process.env.GOOGLE_CLIENTID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback',
+    callbackURL: 'http://medimitra.ms-sat.xyz/auth/google/callback',
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
 }, async (accessToken, refreshToken, profile, done) => {
     try {
