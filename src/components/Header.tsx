@@ -238,13 +238,18 @@ export const Header: React.FC = () => {
                 </div>
                 {isAuthenticated ? (
                   <>
-                    <div className="flex items-center space-x-3 text-gray-700">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center overflow-hidden">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt="Profile"
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : (
                         <span className="text-white text-sm font-medium">
-                          {user?.name?.toUpperCase()}
+                          {user?.name?.[0]?.toUpperCase()}
                         </span>
-                      </div>
-                      <span className="font-medium">{user?.name}</span>
+                      )}
                     </div>
                     {user?.role==='patient' ? <Link
                       to="/profile"
