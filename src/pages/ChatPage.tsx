@@ -1,5 +1,4 @@
-'use client'
-
+// Updated ChatPage.tsx with mobile fixes
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Bot, User } from 'lucide-react';
@@ -16,14 +15,7 @@ interface Message {
   isVoice?: boolean;
 }
 
-// --- Helper Function for Streaming API Call ---
-/**
- * Fetches a streaming response from the backend.
- * @param id
- * @param userMessage The message to send to the backend.
- * @param onChunk A callback function that handles each received text chunk.
- * @param onEnd A callback function that runs when the stream is finished.
- */
+
 const generateStreamingResponse = async (
   id: string,
   userMessage: string,
@@ -31,49 +23,60 @@ const generateStreamingResponse = async (
   onEnd: () => void
 ) => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/chat_message', {
+    const response = await fetch(`http://127.0.0.1:8000/chat_message`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'text/event-stream',
       },
-      // Sending as a JSON object is more standard for APIs
-      body: JSON.stringify({ message: userMessage , id: id || 'unknown_user' }),
+      body: JSON.stringify({ 
+        message: userMessage,
+        id: id || 'unknown_user' 
+      }),
       credentials: 'include',
     });
 
     if (!response.ok || !response.body) {
-      throw new Error(`API Error: ${response.statusText}`);
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) {
-        break; // Exit the loop when the stream is done
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process complete SSE events
+      while (buffer.includes('\n\n')) {
+        const eventEndIndex = buffer.indexOf('\n\n');
+        const eventData = buffer.substring(0, eventEndIndex);
+        buffer = buffer.substring(eventEndIndex + 2);
+        
+        // Clean and process SSE data
+        const cleanedData = eventData.replace(/^data: /, '').trim();
+        if (cleanedData) onChunk(cleanedData);
       }
-      // Decode the chunk and pass it to the callback
-      const chunkText = decoder.decode(value);
-      // Optional: Clean SSE "data: " prefix if your backend sends it
-      const cleanedChunk = chunkText.replace(/^data: /, '').trim();
-      if(cleanedChunk) {
-        onChunk(cleanedChunk);
-      }
+    }
+    
+    // Process any remaining buffer content
+    if (buffer.trim()) {
+      onChunk(buffer.trim());
     }
   } catch (error) {
     console.error("Streaming failed:", error);
-    onChunk("Sorry, an error occurred while generating the response.");
+    onChunk(`Sorry, an error occurred. ${(error as Error).message}`);
   } finally {
-    onEnd(); // Signal that the process is complete
+    onEnd();
   }
 };
 
-
 export const ChatPage: React.FC = () => {
   const { currentLanguage, t } = useLanguage();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -103,7 +106,6 @@ export const ChatPage: React.FC = () => {
     const trimmedInput = inputText.trim();
     if (!trimmedInput) return;
 
-    // 1. Add the user's message to the chat
     const userMessage: Message = {
       id: Date.now().toString(),
       text: trimmedInput,
@@ -111,26 +113,25 @@ export const ChatPage: React.FC = () => {
       timestamp: new Date(),
       language: currentLanguage.code
     };
+    
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
     setIsLoading(true);
 
-    // 2. Add a placeholder for the assistant's response
     const assistantMessageId = (Date.now() + 1).toString();
     const assistantMessage: Message = {
       id: assistantMessageId,
-      text: '', // Start with empty text
+      text: '',
       sender: 'assistant',
       timestamp: new Date(),
       language: currentLanguage.code
     };
+    
     setMessages(prev => [...prev, assistantMessage]);
 
-    // 3. Call the streaming function
     await generateStreamingResponse(
       user?.id || 'anonymous_user',
       trimmedInput,
-      // onChunk: This function appends new text to the assistant's message
       (chunk: string) => {
         setMessages(prev =>
           prev.map(msg =>
@@ -140,14 +141,12 @@ export const ChatPage: React.FC = () => {
           )
         );
       },
-      // onEnd: This function runs when the stream is fully received
       () => {
         setIsLoading(false);
-        inputRef.current?.focus(); // Focus the input field when done
+        inputRef.current?.focus();
       }
     );
   };
-
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -159,7 +158,6 @@ export const ChatPage: React.FC = () => {
   const toggleRecording = () => {
     setIsRecording(!isRecording);
     if (!isRecording) {
-      // Start recording simulation
       setTimeout(() => {
         setIsRecording(false);
         setInputText(t('chat.recording.sampleText'));
@@ -172,7 +170,7 @@ export const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col">
+    <div className="h-[100dvh] bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -204,60 +202,65 @@ export const ChatPage: React.FC = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-6" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div className="max-w-4xl mx-auto space-y-6">
-          <AnimatePresence>
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`flex items-start space-x-3 max-w-3xl ${
-                  message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex items-start space-x-3 max-w-3xl ${
+                message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+              }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                  message.sender === 'user'
+                    ? 'bg-blue-600'
+                    : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
                 }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    message.sender === 'user'
-                      ? 'bg-blue-600'
-                      : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
-                  }`}>
-                    {message.sender === 'user' ? (
-                      <User className="w-4 h-4 text-white" />
-                    ) : (
-                      <Bot className="w-4 h-4 text-white" />
-                    )}
-                  </div>
-                  <div className={`rounded-2xl px-4 py-3 ${
-                    message.sender === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                  }`}>
-                    {/* The whitespace-pre-wrap is important for rendering newlines from the stream */}
-                    <div className="prose prose-sm max-w-none text-sm leading-relaxed whitespace-pre-wrap">
-                      <ReactMarkdown>
-                        {message.text}
-                      </ReactMarkdown>
-                    </div>
-
-                    <p className={`text-xs mt-2 ${
-                      message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                      {message.isVoice && ` • ${t('chat.voiceMessageLabel')}`}
-                    </p>
-                  </div>
+                  {message.sender === 'user' ? (
+                    <User className="w-4 h-4 text-white" />
+                  ) : (
+                    <Bot className="w-4 h-4 text-white" />
+                  )}
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                <div className={`rounded-2xl px-4 py-3 max-w-[85vw] ${
+                  message.sender === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                }`}>
+                  <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <ReactMarkdown
+                      components={{
+                        p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                        ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-2" {...props} />,
+                        ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-2" {...props} />,
+                        li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                        code: ({ node, ...props }) => <code className="bg-gray-100 px-1 rounded font-mono" {...props} />,
+                        pre: ({ node, ...props }) => <pre className="bg-gray-800 text-white p-2 rounded overflow-x-auto my-2" {...props} />
+                      }}
+                    >
+                      {message.text}
+                    </ReactMarkdown>
+                  </div>
 
-          {/* Loading indicator */}
+                  <p className={`text-xs mt-2 ${
+                    message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                  }`}>
+                    {message.timestamp.toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                    {message.isVoice && ` • ${t('chat.voiceMessageLabel')}`}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
           {isLoading && messages[messages.length - 1]?.sender === 'user' && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
