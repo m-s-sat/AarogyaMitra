@@ -6,5 +6,4 @@ RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./agent/ .
 EXPOSE 8000
-CMD ["python", "app.py"]
-# CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
