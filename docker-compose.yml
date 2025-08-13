@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Docker-files/node/Dockerfile
     ports:
-      - "5000:5000"
+      - "5000:5001"
     depends_on:
       - agent
     env_file:
