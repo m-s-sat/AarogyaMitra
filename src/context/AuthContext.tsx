@@ -205,7 +205,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       if (!response.ok) throw new Error("Failed to fetch hospitals");
       const rawData = await response.json();
-      console.log("Raw hospital data:", rawData);
       const formattedHospitals = rawData.map((hospital: HospitalFound) => ({
         _id: hospital._id,
         hospital_name: hospital.hospital_name || 'Hospital Name not available',
@@ -230,7 +229,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       body: JSON.stringify(update),
     });
     const data = await response.json();
-    console.log("Add doctor response data:", data.data);
     if(!response.ok) {
       alert(data.message || "Error adding doctor");
     }

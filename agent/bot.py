@@ -140,9 +140,9 @@ tools = [evaluate_expression, search_duckduckgo,book_appointment,api_retriver,to
 
 
 # %%
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro").bind_tools(tools=tools)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-falsh").bind_tools(tools=tools)
 
-summary_llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro")
+summary_llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
 # %%
 class chat(BaseModel):
@@ -217,7 +217,7 @@ def history(chats: chat):
     
     prompt = "Summarize the above messages. Summary must to be to the point and should be under 200 words"
     command = SystemMessage(prompt)
-    model_in = [message]+[summary]+[prompt]
+    model_in = [message]+[summary]+[command]
     
     result = summary_llm.invoke(input=model_in)
     

@@ -64,7 +64,6 @@ export const SignupPage: React.FC = () => {
         avatar: '',
         role: selectedRole
       };
-      console.log(newUser)
       signup(newUser);
       if(selectedRole === 'patient') navigate('/dashboard');
       else if(selectedRole === 'hospital') navigate('/hospital/dashboard');
