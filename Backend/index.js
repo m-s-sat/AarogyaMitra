@@ -7,7 +7,7 @@ const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-
+const fetch = require('node-fetch');
 const authRouter = require('./routes/auth');
 const hospitalRouter = require('./routes/hospital');
 const User = require('./model/auth');
@@ -22,6 +22,7 @@ const { MongoClient } = require('mongodb');
 const localStrategy = require('passport-local').Strategy;
 const googleStrategy = require('passport-google-oauth2').Strategy;
 const path = require('path');
+const { isAuth } = require('./common/common');
 
 const server = express();
 const httpServer = http.createServer(server);
@@ -166,7 +167,33 @@ main().catch(err => console.log(err));
 
 server.use('/auth', authRouter.router);
 server.use('/hospital', hospitalRouter);
+server.post('/api/chat_message', isAuth, async (req, res) => {
+  try {
+    const agentResponse = await fetch('http://agent:8000/chat_message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+      },
+      body: JSON.stringify(req.body),
+    });
 
+    if (!agentResponse.ok || !agentResponse.body) {
+      res.status(agentResponse.status).send(agentResponse.statusText);
+      return;
+    }
+
+    // Pass through SSE streaming to the frontend
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    agentResponse.body.pipe(res);
+  } catch (error) {
+    console.error('Error proxying request:', error);
+    res.status(500).send('Proxy error');
+  }
+});
 server.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
