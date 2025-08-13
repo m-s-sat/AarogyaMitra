@@ -22,8 +22,8 @@ from langgraph.graph.message import add_messages
 from datetime import datetime
 from langchain.prompts import PromptTemplate
 from langchain_core.messages.utils import count_tokens_approximately
-from agent.booking import tool_doctor
-from agent.gemini_embedding import disease_data_search_from_database
+from booking import tool_doctor
+from gemini_embedding import disease_data_search_from_database
 
 # %%
 def get_current_datetime_response():
