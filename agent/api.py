@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from bot import graph,chat,get_current_datetime_response,checkpointer
+from bot import graph,chat,get_current_datetime_response
 from langchain_core.messages import HumanMessage
 import asyncio
 
@@ -11,7 +11,6 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://localhost:5173", 
-    "https://medimitra.ms-sat.xyz"
 ]
 
 app.add_middleware(
@@ -44,18 +43,18 @@ Assistant: Calls a tool to book appointment of the doctor.
 If you want to know about some type of disease or symptom related data use the disease info tool and also web search
 
 """
+dynamic_sys= f"{get_current_datetime_response()}, Location of the user= lat=16.27939453125&lon=80.58837890625 \n"
 
 
 def stream_chat(message,id):
     input_ = message
     id_ = id
-    # config = {"configurable": {"thread_id": id_}}
-    # m = checkpointer.get_state(config).values["messages"]
+    
     global static_sys
-    dynamic = f"{dynamic_sys} ,User id: {id_}"
+    global dynamic_sys
+    dynamic = dynamic_sys + " User id: " + id_
     state = chat(static_system=static_sys,
                  dynamic_system=dynamic,
-                 u1="",
                  summary="",
                  messages=[HumanMessage(input_)])
     for chunk, meta in graph.stream(input=state,

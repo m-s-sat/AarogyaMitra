@@ -12,7 +12,7 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 from langchain.tools import tool
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, computed_field, field_validator
 from typing import Annotated
 from langchain_core.messages import ToolMessage, SystemMessage, AnyMessage,BaseMessage
 from langgraph.checkpoint.mongodb import MongoDBSaver
@@ -148,8 +148,15 @@ summary_llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 class chat(BaseModel):
     static_system : str
     dynamic_system : str
-    summary : str 
+    summary : str
     messages : Annotated[list[AnyMessage], add_messages]
+    @field_validator('summary', mode='before')
+    def validate_summary(cls, v):
+        """Ensure summary is always a string"""
+        if hasattr(v, 'content'):
+            return v.content  # Extract content from message objects
+        return str(v)
+    
     @computed_field(return_type=BaseMessage)
     @property
     def model_in_sys(self):
@@ -171,8 +178,7 @@ def chat_node(chats: chat):
     input_ = [chats.model_in_sys]+[chats.model_in_summary]
     input_ = input_ + chats.messages
     response = llm.invoke(input_)
-    messages = chats.messages + [response]
-    return {"messages":messages}
+    return {"messages":[response]}
 
 # %%
 tool_dict = {tool.name : tool for tool in tools}
@@ -186,11 +192,11 @@ def tool_node(chat: chat):
             tool = tool_dict[tool_name]
             tool_response = tool.invoke(tool_call["args"])
             tool_message = ToolMessage(content=tool_response, name=tool_name, tool_call_id=tool_call["id"])
-            messages = chat.messages + [tool_message]
+            chat.messages.append(tool_message)
         except Exception as e:
             error_message = ToolMessage(content=f"{str(e)}", name = tool_name, tool_call_id=tool_call["id"])
-            messages = chat.messages + [error_message]
-    return {"messages":messages}
+            chat.messages.append(error_message)
+    return chat
 
 # %%
 def tool_call_condition(chats: chat):
@@ -214,17 +220,20 @@ def token_count(chats: chat):
 
 def history(chats: chat):
     message = chats.messages[0]
-    summary = chats.model_in_summary
+    summary = SystemMessage(chats.summary)
     
-    prompt = "Summarize the above messages. Summary must to be to the point and should be under 200 words"
-    command = SystemMessage(prompt)
-    model_in = [message]+[summary]+[command]
+    prompt = f"""Summarize the given messages. Summary must to be to the point and should be under 200 words
+    last user message: {message.content}
+    summary of a conversation: {chats.summary}
+    """
     
-    result = summary_llm.invoke(input=model_in)
+    # model_in = [command]+[summary]+[message]
+    model_in = prompt
+    result = summary_llm.invoke(model_in).content
     id_r = message.id
     remove = RemoveMessage(id=str(id_r))
     
-    return {"summary":result,"messages":[remove]}
+    return {"summary":"","messages":[remove]}
 
 # %%
 builder = StateGraph(chat)
