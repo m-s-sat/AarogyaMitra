@@ -171,7 +171,7 @@ def chat_node(chats: chat):
     input_ = [chats.model_in_sys]+[chats.model_in_summary]
     input_ = input_ + chats.messages
     response = llm.invoke(input_)
-    messages = chats.messages.append(response)
+    messages = chats.messages + response
     return {"messages":messages}
 
 # %%
@@ -186,10 +186,10 @@ def tool_node(chat: chat):
             tool = tool_dict[tool_name]
             tool_response = tool.invoke(tool_call["args"])
             tool_message = ToolMessage(content=tool_response, name=tool_name, tool_call_id=tool_call["id"])
-            messages = chat.messages.append(tool_message)
+            messages = chat.messages + tool_message
         except Exception as e:
             error_message = ToolMessage(content=f"{str(e)}", name = tool_name, tool_call_id=tool_call["id"])
-            messages = chat.messages.append(error_message)
+            messages = chat.messages + error_message
     return {"messages":messages}
 
 # %%
