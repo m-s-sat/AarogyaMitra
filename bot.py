@@ -14,16 +14,16 @@ from langgraph.graph import StateGraph, START, END
 from langchain.tools import tool
 from pydantic import BaseModel, computed_field
 from typing import Annotated
-from langchain_core.messages import BaseMessage
-from langchain_core.messages import ToolMessage, SystemMessage
+from langchain_core.messages import ToolMessage, SystemMessage, AnyMessage,BaseMessage
 from langgraph.checkpoint.mongodb import MongoDBSaver
 from pymongo import MongoClient
-from langgraph.graph.message import add_messages
+from langgraph.graph.message import add_messages,RemoveMessage
 from datetime import datetime
 from langchain.prompts import PromptTemplate
 from langchain_core.messages.utils import count_tokens_approximately
 from booking import tool_doctor
 from gemini_embedding import disease_data_search_from_database
+
 
 # %%
 def get_current_datetime_response():
@@ -149,7 +149,7 @@ class chat(BaseModel):
     static_system : str
     dynamic_system : str
     summary : str 
-    messages : Annotated[list[BaseMessage], add_messages]
+    messages : Annotated[list[AnyMessage], add_messages]
     @computed_field(return_type=BaseMessage)
     @property
     def model_in_sys(self):
@@ -220,11 +220,10 @@ def history(chats: chat):
     model_in = [message]+[summary]+[prompt]
     
     result = summary_llm.invoke(input=model_in)
+    id_r = message.id
+    remove = RemoveMessage(id=str(id_r))
     
-    chats.summary = result.content
-    chats.messages = chats.messages[1:]
-    
-    return chats
+    return {"summary":result,"messages":[remove]}
 
 # %%
 builder = StateGraph(chat)

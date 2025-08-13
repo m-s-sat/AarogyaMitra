@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-embedding_model = GoogleGenerativeAIEmbeddings()
+embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
 
 
 
@@ -33,7 +33,7 @@ retriver = vector_store.as_retriever(
 def disease_data_search_from_database(query: str):
     results = retriver.invoke(query)
     out = "\n".join(result.page_content for result in results)
-    return 
+    return out
 
     
     
