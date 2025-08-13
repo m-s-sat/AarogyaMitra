@@ -24,7 +24,7 @@ exports.createUser = async(req, res)=>{
             const user = new User({username, name, password:hashedPassword, phone, preferredLanguage, avatar, dob, pincode, role});
             await user.save();
             const appName = 'Medimitra';
-            const profileLink = 'http://localhost:5173/profile';
+            const profileLink = 'https://medimitra.ms-sat.xyz/profile';
             const currentYear = new Date().getFullYear();
             let htmlToSend = welcomeEmailTemplate
                 .replace(/{{APP_NAME}}/g, appName)

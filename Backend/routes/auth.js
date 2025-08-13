@@ -24,7 +24,7 @@ router
     .get('/check', isAuth, checkAuthStatus)
     .get('/google', passport.authenticate('google', { scope: ["profile", "email"] }))
     .get('/google/callback', passport.authenticate("google"), (req, res) => {
-        res.redirect('http://localhost:5173/dashboard');
+        res.redirect('https://medimitra.ms-sat.xyz/dashboard');
     })
     .post('/reset-request', setForgotPassToken)
     .post('/password-reset', forgotpass)
