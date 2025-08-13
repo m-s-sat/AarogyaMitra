@@ -33,7 +33,7 @@ retriver = vector_store.as_retriever(
 def disease_data_search_from_database(query: str):
     results = retriver.invoke(query)
     out = "\n".join(result.page_content for result in results)
-    return 
+    return out
 
     
     
