@@ -23,7 +23,7 @@ from datetime import datetime
 from langchain.prompts import PromptTemplate
 from langchain_core.messages.utils import count_tokens_approximately
 from booking import tool_doctor
-from embedding_model import disease_data_search_from_database
+from gemini_embedding import disease_data_search_from_database
 
 # %%
 def get_current_datetime_response():
