@@ -140,9 +140,9 @@ tools = [evaluate_expression, search_duckduckgo,book_appointment,api_retriver,to
 
 
 # %%
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash").bind_tools(tools=tools)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro").bind_tools(tools=tools)
 
-summary_llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+summary_llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro")
 
 # %%
 class chat(BaseModel):
