@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from bot import graph,chat,get_current_datetime_response
+from bot import graph,chat,get_current_datetime_response,checkpointer
 from langchain_core.messages import HumanMessage
 import asyncio
 
@@ -50,7 +50,8 @@ dynamic_sys= f"{get_current_datetime_response()}, Location of the user= lat=16.2
 def stream_chat(message,id):
     input_ = message
     id_ = id
-    
+    config = {"configurable": {"thread_id": id_}}
+    m = checkpointer.get_state(config).values["messages"]
     global static_sys
     global dynamic_sys
     dynamic = f"{dynamic_sys} ,User id: {id_}"
@@ -58,7 +59,7 @@ def stream_chat(message,id):
                  dynamic_system=dynamic,
                  u1="",
                  summary="",
-                 messages=[HumanMessage(input_)])
+                 messages= m + [HumanMessage(input_)])
     for chunk, meta in graph.stream(input=state,
                                 config={"configurable": {"thread_id": id_}},
                                 stream_mode="messages"
