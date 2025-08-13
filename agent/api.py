@@ -50,15 +50,15 @@ def stream_chat(message,id):
     dynamic_sys= f"{get_current_datetime_response()}, Location of the user= lat=16.27939453125&lon=80.58837890625 \n"
     input_ = message
     id_ = id
-    config = {"configurable": {"thread_id": id_}}
-    m = checkpointer.get_state(config).values["messages"]
+    # config = {"configurable": {"thread_id": id_}}
+    # m = checkpointer.get_state(config).values["messages"]
     global static_sys
     dynamic = f"{dynamic_sys} ,User id: {id_}"
     state = chat(static_system=static_sys,
                  dynamic_system=dynamic,
                  u1="",
                  summary="",
-                 messages= m + [HumanMessage(input_)])
+                 messages=[HumanMessage(input_)])
     for chunk, meta in graph.stream(input=state,
                                 config={"configurable": {"thread_id": id_}},
                                 stream_mode="messages"
