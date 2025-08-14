@@ -167,33 +167,44 @@ main().catch(err => console.log(err));
 
 server.use('/auth', authRouter.router);
 server.use('/hospital', hospitalRouter);
-server.post('/api/chat_message', isAuth, async (req, res) => {
-  try {
-    const agentResponse = await fetch('http://agent:8000/chat_message', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'text/event-stream',
-      },
-      body: JSON.stringify(req.body),
-    });
 
-    if (!agentResponse.ok || !agentResponse.body) {
-      res.status(agentResponse.status).send(agentResponse.statusText);
+server.post('/api/chat_message', isAuth, (req, res) => {
+  const postData = JSON.stringify(req.body);
+
+  const options = {
+    hostname: 'agent',
+    port: 8000,
+    path: '/chat_message',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'text/event-stream',
+      'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  const proxyReq = http.request(options, (proxyRes) => {
+    if (proxyRes.statusCode !== 200) {
+      res.status(proxyRes.statusCode).end();
       return;
     }
 
-    // Pass through SSE streaming to the frontend
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    agentResponse.body.pipe(res);
-  } catch (error) {
-    console.error('Error proxying request:', error);
+    proxyRes.pipe(res);
+  });
+
+  proxyReq.on('error', (err) => {
+    console.error('Error proxying request:', err);
     res.status(500).send('Proxy error');
-  }
+  });
+
+  proxyReq.write(postData);
+  proxyReq.end();
 });
+
 server.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
