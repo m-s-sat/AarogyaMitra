@@ -109,7 +109,7 @@ exports.setForgotPassToken = async(req,res)=>{
         const token = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = token;
         await user.save();
-        const resetPageLink = '/password-reset/?token='+token+'&email='+email;
+        const resetPageLink = 'https://medimitra.ms-sat.xyz/password-reset/?token='+token+'&email='+email;
         const subject = 'Reset password for your medimitra account';
         let html = emailTemplate.replace('{{RESET_LINK}}', resetPageLink);
         html = html.replace('{{NAME}}', user.name);
