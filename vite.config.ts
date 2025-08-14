@@ -29,6 +29,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       },
+      '/api': {
+        target: 'http://172.31.93.85:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   }
 });

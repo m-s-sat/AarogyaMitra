@@ -23,17 +23,17 @@ const generateStreamingResponse = async (
   onEnd: () => void
 ) => {
   try {
-    const response = await fetch(`http://172.31.93.85:8000/chat_message`, {
+    const response = await fetch(`/api/chat_message`, {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'text/event-stream',
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream",
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         message: userMessage,
-        id: id || 'unknown_user' 
+        id: id || "unknown_user",
       }),
-      credentials: 'include',
+      credentials: "include",
     });
 
     if (!response.ok || !response.body) {
@@ -42,27 +42,24 @@ const generateStreamingResponse = async (
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       buffer += decoder.decode(value, { stream: true });
-      
-      // Process complete SSE events
-      while (buffer.includes('\n\n')) {
-        const eventEndIndex = buffer.indexOf('\n\n');
+
+      while (buffer.includes("\n\n")) {
+        const eventEndIndex = buffer.indexOf("\n\n");
         const eventData = buffer.substring(0, eventEndIndex);
         buffer = buffer.substring(eventEndIndex + 2);
-        
-        // Clean and process SSE data
-        const cleanedData = eventData.replace(/^data: /, '').trim();
+
+        const cleanedData = eventData.replace(/^data: /, "").trim();
         if (cleanedData) onChunk(cleanedData);
       }
     }
-    
-    // Process any remaining buffer content
+
     if (buffer.trim()) {
       onChunk(buffer.trim());
     }
@@ -73,6 +70,7 @@ const generateStreamingResponse = async (
     onEnd();
   }
 };
+
 
 export const ChatPage: React.FC = () => {
   const { currentLanguage, t } = useLanguage();
