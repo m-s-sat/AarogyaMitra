@@ -33,6 +33,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   if(loginHospital?.role === 'hospital') {
     return <Navigate to="/hospital/dashboard" />;
   }
+  return children;
 };
 
 function AppContent() {
