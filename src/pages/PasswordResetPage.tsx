@@ -20,7 +20,7 @@ export const PasswordResetPage: React.FC = () => {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert(t("passwordReset.passwordsMismatch"));
+      alert("Password is not matching with confirm password");
       return;
     }
     // Backend request to reset password here
@@ -51,10 +51,10 @@ export const PasswordResetPage: React.FC = () => {
             <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            {t("passwordReset.title")}
+            {'Reset Password'}
           </h2>
           <p className="text-gray-600">
-            {t("passwordReset.subtitle")}
+            {'Reset your password here'}
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export const PasswordResetPage: React.FC = () => {
             {/* New Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("passwordReset.newPassword")}
+                {'New Password'}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -91,7 +91,7 @@ export const PasswordResetPage: React.FC = () => {
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("passwordReset.confirmPassword")}
+                {'Confirm Password'}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -110,7 +110,7 @@ export const PasswordResetPage: React.FC = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-emerald-700"
             >
-              {t("passwordReset.button")}
+              {'Reset Password'}
             </button>
           </form>
         </div>
