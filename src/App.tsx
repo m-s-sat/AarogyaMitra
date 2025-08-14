@@ -16,6 +16,7 @@ import { MyMedicinesPage } from './pages/MyMedicinesPage';
 import { HelpdeskPage } from './pages/HelpdeskPage';
 import { HospitalDashboard } from './pages/HospitalDashboard';
 import HospitalProfile from './pages/HospitalProfile.tsx';
+import { PasswordResetPage } from './pages/PasswordResetPage.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -75,7 +76,14 @@ function AppContent() {
               </PublicRoute>
             } 
           />
-
+          <Route
+            path='/password-reset'
+            element={
+              <PublicRoute>
+              <PasswordResetPage></PasswordResetPage>
+              </PublicRoute>
+            }
+          ></Route>
           {/* Protected Routes */}
           <Route 
             path="/dashboard" 
