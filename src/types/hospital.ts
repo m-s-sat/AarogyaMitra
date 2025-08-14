@@ -1,6 +1,6 @@
 export interface HospitalProfile {
   id: string;
-  
+
   // Basic Hospital Details
   basicDetails: {
     name: string;
@@ -181,6 +181,71 @@ export interface HospitalDoctor {
   profilePhoto?: string;
   joinedDate: string;
   isActive: boolean;
+
+  // New doctor-specific fields from latest structure
+  workingHours?: {
+    [key: string]: { // day of week
+      start: string;
+      end: string;
+      isWorking: boolean;
+    };
+  };
+  slotDuration?: number; // in minutes
+  maxPatientsPerSlot?: number;
+}
+
+export interface HospitalAppointment {
+  id: string;
+  patientId: string;
+  patientName: string;
+  patientPhone: string;
+  patientEmail?: string;
+  doctorId: string;
+  doctorName: string;
+  department: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  duration: number; // in minutes
+  type: 'online' | 'walk-in' | 'emergency';
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no-show' | 'in-progress';
+  notes?: string;
+  cancelReason?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string; // staff member who created
+  lastModifiedBy?: string;
+  isRecurring?: boolean;
+  recurringPattern?: {
+    frequency: 'weekly' | 'monthly';
+    interval: number;
+    endDate?: string;
+  };
+  priority: 'normal' | 'urgent' | 'emergency';
+  consultationType: 'physical' | 'video';
+}
+
+export interface TimeSlot {
+  time: string;
+  isAvailable: boolean;
+  currentBookings: number;
+  maxBookings: number;
+  appointments: HospitalAppointment[];
+}
+
+export interface AppointmentConflict {
+  type: 'double-booking' | 'doctor-unavailable' | 'hospital-closed' | 'slot-full';
+  message: string;
+  conflictingAppointments?: HospitalAppointment[];
+}
+
+export interface AuditLog {
+  id: string;
+  appointmentId: string;
+  action: 'created' | 'updated' | 'cancelled' | 'completed' | 'no-show';
+  performedBy: string;
+  timestamp: string;
+  changes?: Record<string, { old: any; new: any }>;
+  reason?: string;
 }
 
 export interface AdminLogEntry {

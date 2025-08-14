@@ -16,6 +16,7 @@ import { MyMedicinesPage } from './pages/MyMedicinesPage';
 import { HelpdeskPage } from './pages/HelpdeskPage';
 import { HospitalDashboard } from './pages/HospitalDashboard';
 import { HospitalProfile } from './pages/HospitalProfile.tsx';
+import { HospitalAppointmentManager } from './pages/HospitalAppointmentManager.tsx';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -94,7 +95,7 @@ function AppContent() {
             path='/hospital/profile'
             element={
               <ProtectedRoute>
-                <HospitalProfile></HospitalProfile>
+                <HospitalProfile onNavigate={()=>{}}></HospitalProfile>
               </ProtectedRoute>
             }
           ></Route>
@@ -106,6 +107,7 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
+          
           <Route 
             path="/chat" 
             element={
@@ -122,7 +124,7 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
-
+<Route path="/hospital/appointments" element={<HospitalAppointmentManager />} />
           <Route 
             path="/profile" 
             element={

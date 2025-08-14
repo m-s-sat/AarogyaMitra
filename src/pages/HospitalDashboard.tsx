@@ -1,5 +1,3 @@
-// HospitalDashboard.tsx
-// ... (your existing imports and component structure)
 import React, { useState, useEffect } from 'react';
 import HospitalProfile from './HospitalProfile.tsx';
 import { useNavigate } from "react-router-dom";
@@ -676,7 +674,8 @@ export const HospitalDashboard: React.FC = () => {
                     <span className="font-medium text-blue-700">Add New Doctor</span>
                   </button>
 
-                  <button className="flex items-center space-x-3 p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
+                  <button className="flex items-center space-x-3 p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
+                  onClick={() => navigate('/hospital/appointments')}>
                     <Calendar className="w-6 h-6 text-emerald-600" />
                     <span className="font-medium text-emerald-700">Manage Appointments</span>
                   </button>
